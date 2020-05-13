@@ -82,8 +82,8 @@ function listenForMessages()
 
       if message.computerType == "loading_platform" then -- Loading platform!
         if message.directive == "connect" then 
-          platforms[message.payload.priority] = {platformName=message.payload.platformName} --save device data
-
+          platforms[message.payload.priority] = {platformName=message.payload.platformName, trainPresent=message.payload.trainPresent} --save device data
+          
           common.sendMessage(message.payload.priority..":connect", station.routes) -- send routes to loading platforms 
         end -- if (directive)
       end -- if (computer type)

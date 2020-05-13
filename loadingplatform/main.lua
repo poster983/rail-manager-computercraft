@@ -3,7 +3,14 @@
     Manages the printing of tickets and informs the ticketmaster or yard computer of train state
 ]]
 local settings = require("./settings");
-local printer = peripheral.wrap(station.printerSide);
+local common = require("./common");
+local printer = peripheral.wrap(settings.printerSide);
+
+local modem = peripheral.wrap( settings.modemSide )
+modem.open(settings.modemChannel)
+
+local trainPresent = redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent);
+
 local station = {} --load from network
 
 --Destination is a string matching the station route
@@ -55,12 +62,41 @@ function listenForMessages()
   end -- while
 end --listenForMessages
 
+function listenForRedstone() 
+
+  while true do
+    os.pullEvent("redstone") -- wait for a "redstone" event
+
+    local tp = redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent)
+    if tp then -- check if the train is present. only trrigger if changed
+      setTrainStatus(tp)
+    end -- train present if 
+
+
+  end -- while 
+end -- function listenForRedstone
+
+
+function setTrainStatus(isPresent) 
+  if isPresent ~= trainPresent then 
+    trainPresent = isPresent
+    local message = {priority=settings.priority, trainPresent=trainPresent}
+    common.sendMessage("train_status", message)
+  end -- if
+end -- function setTrainStatus
+
 
 function main() 
     --get routes
-    local message = {platformName=settings.platformName, priority=settings.priority}
-    common.sendMessage("connect", message)
+    local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
+    while station.routes == nil do -- try and connect.  and send connection requests until connected
+      print("Trying to connect")
+      common.sendMessage("connect", message)
+      sleep(5)
+    end -- routes
+
+
 
 end --main
 
-parallel.waitForAll(main, listenForMessages)
+parallel.waitForAll(main, listenForMessages, listenForRedstone)
