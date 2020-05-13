@@ -1,6 +1,8 @@
 junctions = require("./junctions")
 -- Station Config
 local station = {}
+station.computerType = "ticketmaster" --Do Not Change
+
 --Station Settings (Change for Each Station) 
 --Sould match the route names for every other station
 station.stationID = "base" --should match the routes on other configs

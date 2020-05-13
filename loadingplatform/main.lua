@@ -37,12 +37,30 @@ function printString(string)
 end 
 
 
+function listenForMessages() 
+  while true do 
+    local event, modemSide, senderChannel, 
+    replyChannel, message, senderDistance = os.pullEvent("modem_message")
+
+    if message ~= nil and message.yardID == settings.yardID and message.stationID == settings.stationID then -- this is a message for us 
+      print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
+
+      if message.computerType == "ticketmaster" then -- Message from ticket master!
+        if message.directive == settings.priority..":connect" then 
+          station.routes = message.payload -- save routes
+        end -- if (directive)
+      end -- if (computer type)
+
+    end -- if
+  end -- while
+end --listenForMessages
+
 
 function main() 
     --get routes
     local message = {platformName=settings.platformName, priority=settings.priority}
     common.sendMessage("connect", message)
 
-end 
+end --main
 
-main()
+parallel.waitForAll(main, listenForMessages)

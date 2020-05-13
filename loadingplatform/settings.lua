@@ -1,11 +1,12 @@
 local settings = {}
+settings.computerType = "loading_platform" --Do Not Change
 
 settings.priority = 1 --lower numbers get higher priority
-
 
 settings.platformName = "9 3/4"
 settings.printerSide = "top"
 settings.cableSide = "back"
+settings.modemSide = "left"
 settings.modemChannel = 1 
 
 settings.stationID = "base" -- should match the networkid in ticketmaster

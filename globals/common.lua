@@ -15,6 +15,7 @@ common.sendMessage = function(directive, payload)
 
   message.yardID = settings.yardID
   message.stationID = settings.stationID
+  message.computerType = settings.computerType
   message.directive = directive
   message.payload = payload
 

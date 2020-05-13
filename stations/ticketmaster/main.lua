@@ -5,8 +5,9 @@ local station = require("./settings")
 local common = require("./common")
 os.loadAPI("button")
 
-local modem = peripheral.wrap( "top" )
+local platforms = {} -- platform IDs and such 
 
+local modem = peripheral.wrap( station.modemSide )
 modem.open(station.modemChannel)
 
 local monitor = peripheral.wrap( station.screenSide )
@@ -71,15 +72,23 @@ function listenForClick()
   end -- while
 end -- function 
 
-function listenForMessage()
+function listenForMessages()
   while true do 
     local event, modemSide, senderChannel, 
     replyChannel, message, senderDistance = os.pullEvent("modem_message")
 
     if message ~= nil and message.yardID == station.yardID and message.stationID == station.stationID then -- this is a message for us 
-      print("Directive: " .. message.directive)
+      print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
 
-    end
+      if message.computerType == "loading_platform" then -- Loading platform!
+        if message.directive == "connect" then 
+          platforms[message.payload.priority] = {platformName=message.payload.platformName} --save device data
+
+          common.sendMessage(message.payload.priority..":connect", station.routes) -- send routes to loading platforms 
+        end -- if (directive)
+      end -- if (computer type)
+
+    end -- if
   end -- while
 end -- function
 
@@ -92,4 +101,4 @@ function main()
   end -- while
 end -- function
 
-parallel.waitForAll(main, listenForClick, listenForMessage)
+parallel.waitForAll(main, listenForClick, listenForMessages)
