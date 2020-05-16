@@ -37,18 +37,27 @@ function buildDepartures()
 end -- buildDepartures
 
 function alert(message, color) 
-    term.redirect( monitor )
+    local oldterm = term.redirect( monitor )
 
     for y=h,1,-1 do --animate box
-        paintutils.drawFilledBox(1,y,w,y+1, color)
+        paintutils.drawBox(1,y,w,y+1, color)
+        sleep(0.1)
     end -- for
-    term.setCursorPos((w/2)-(message.len()/2),h/2)
+    local oldx, oldy = term.getCursorPos()
+    term.setCursorPos(math.floor((w/2)-(string.len(message)/2)+0.5),h/2)
     term.write(message)
+    term.setCursorPos(oldx,oldy)
 
-    term.restore()
+    term.redirect(oldterm)
 end -- alert
 
+
+
+
 function main() 
-    sleep(5)
-    alert("Test", colors.red)
+    monitor.clear()
+    paintutils.drawFilledBox(1,1,w,h, colors.black)
+    --sleep(5)
+    --alert("Test", colors.red)
 end -- main
+main()
