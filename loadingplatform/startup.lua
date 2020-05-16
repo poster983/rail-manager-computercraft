@@ -54,14 +54,15 @@ function listenForMessages()
       if message.computerType == "ticketmaster" then -- Message from ticket master!
         if message.directive == settings.priority..":connect" then 
           station.routes = message.payload -- save routes
+           
         end -- if (directive :connect)
 
         if message.directive == "reconnect" then -- reconnect message to ticket master
           connectToParent()
         end -- directive reconnect
 
-        if message.directive == "setDestination" and message.payload.priority == settings.priority =  then -- set a destination and print it
-          if printTickets(message.payload) == false then 
+        if message.directive == "setDestination" and message.payload.priority == settings.priority then -- set a destination and print it
+          if printTickets(message.payload.destination) == false then 
             common.sendMessage("error", {priority=settings.priority, message="Could not print tickets"})
           end -- if 
         end -- directive reconnect

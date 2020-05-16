@@ -115,7 +115,7 @@ function listenForMessages()
             if message.payload.trainPresent == false then 
               --track no longer has destination
               platforms[message.payload.priority].destination = nil
-            else -- if
+            end -- if
             nextJob()
 
           end -- if
