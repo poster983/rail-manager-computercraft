@@ -13,10 +13,9 @@ station.screenSide = "top"
 station.modemSide = "right"
 station.modemChannel = 1 --THere should be one yard per channell
 -- Route Table (Chnage for each station)
-station.routes = {
-  doof={junctions.villageEntrance, junctions.doofEntrance},
-  village={junctions.villageEntrance},
-  all={junctions.villageEntrance, junctions.doofEntrance, junctions.hubEntrance, junctions.villageWestboundUTurn}
-}
+
+station.routes["Doof"] = {junctions.villageEntrance, junctions.doofEntrance};
+station.routes["Village"] = {junctions.villageEntrance};
+station.routes["All"] = {junctions.villageEntrance, junctions.doofEntrance, junctions.hubEntrance, junctions.villageWestboundUTurn};
 
 return station;

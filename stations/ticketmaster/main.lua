@@ -1,74 +1,82 @@
 --Entrypoint for stations destination chooser
 -- REQUIRES https://github.com/Siarko/ButtonApi
 -- WGET it from: https://raw.githubusercontent.com/Siarko/ButtonApi/master/button
-local station = require("./settings")
+local settings = require("./settings")
 local common = require("./common")
-os.loadAPI("button")
+local screen = require("./screen")
+local Queue = require("./Queue")
+
 
 local platforms = {} -- platform IDs and such 
+local jobs = Queue:new(); --create new job queue
+local summoned = Queue:new(); -- create a new queue for jobs that had trains summoned for them
 
-local modem = peripheral.wrap( station.modemSide )
-modem.open(station.modemChannel)
+local modem = peripheral.wrap( settings.modemSide )
+modem.open(settings.modemChannel)
 
-local monitor = peripheral.wrap( station.screenSide )
-button.setMonitor(monitor)
---get screen size
-local w, h = monitor.getSize()
-local routeKeys = common.getTableKeys(station.routes);
+--list of button objects 
+local buttons = {};
 
---[[local w = 19
-local h = 19]]
+--checks the queue and sees if any trains are avalable
+function nextJob()
+  if jobs:size() == 0 and summoned:size() == 0 then --check if queue is empty 
+    return
+  end --if 
 
-local buttons = {}
-local buttonPadding = 2;
-local buttonWidth = (w/2);
-local buttonHeight = (h/table.getn(routeKeys));
-
---build the buttons 
-function buildButtons()
-  print(buttonWidth, buttonHeight)
-  local x=0 --col
-  local y=0 --row
-  for k, v in pairs(station.routes) do
-    local bx = buttonPadding --button x 
-    local by = buttonPadding --button y
-    --find the coords of the button
-    --find by 
-    by = by + (y*buttonHeight)
-    --bx
-    if x == 1 then -- row 2
-      bx = bx + buttonWidth;
-      x = 0;
-      y = y+1;
-    else 
-      x = 1;
-    end --if
-    
-    --add button
-    --t:add(k, nil, bx, by, bx+buttonWidth-buttonPadding, by+buttonHeight-buttonPadding, colors.red, colors.lime)
-    local but = button.create(k)
-    but.setPos(bx,by)
-    but.setSize(buttonWidth-buttonPadding,buttonHeight-buttonPadding)
-    but.onClick(function() setDestination(k) end)
-    --add to array
-    buttons[#buttons+1] = but;
-    print(k .. ": x: ".. bx .. " y: " .. by)
-  end --for
-  
-end --function
-
-buildButtons()
-
-function setDestination(destination)
-  print("Selected: " .. destination)
+  local platformEmpty = false --there exists some empty platform that we could call a train to
 
   --check if any trains are avalable
+  for i,pf in ipairs(platforms) do
+    if pf.trainPresent == true and pt.destination == nil then -- handle present trains and immediate departures 
+      print("Send Destination to computer ")
+      --Send destination info to that platform
+      if summoned:size() > 0 then --dequeue from summoned first
+        platforms[i].destination = summoned:dequeue()
+      else --dequeue from main jobs
+        platforms[i].destination = jobs:dequeue()
+      end --if else
+      screen.printJobCount(jobs:size() + summoned:size()) -- update screen
+      return;
+    end --if 
+    if pf.trainPresent == false then 
+      platformEmpty = true
+    end -- if
+  end -- for 
+
+  if platformEmpty then --call a train
+    if jobs:size() ~= 0 then 
+      --SEND CALL FOR TRAIN FROM HUB TODOOOO
+      print("Call Train")
+      summoned:enqueue(jobs:dequeue()) --move to summoned queue
+    end -- if
+
+  end --if
+
+end -- nextjob
+
+
+--adds jobs to the queue
+function newDestination(destination)
+  print("Selected: " .. destination)
+  if platforms == {} then --if no loading platforms have connected
+    print("No loading platforms are connected")
+    return;
+  end -- if 
+
+  jobs:enqueue(destination)
+  screen.printJobCount(jobs:size())
+
+  -- try and run the job
+  nextJob()
 
 end --function
 
 function listenForClick() 
   while true do 
-    button.await(buttons)
+    local event = button.await(buttons)
+    if(event ~= nil and event.type = "destination") then 
+      newDestination(event.value)
+    end -- if 
   end -- while
 end -- function 
 
@@ -77,14 +85,14 @@ function listenForMessages()
     local event, modemSide, senderChannel, 
     replyChannel, message, senderDistance = os.pullEvent("modem_message")
 
-    if message ~= nil and message.yardID == station.yardID and message.stationID == station.stationID then -- this is a message for us 
+    if message ~= nil and message.yardID == settings.yardID and message.stationID == settings.stationID then -- this is a message for us 
       print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
 
       if message.computerType == "loading_platform" then -- Loading platform!
         if message.directive == "connect" then 
-          platforms[message.payload.priority] = {platformName=message.payload.platformName, trainPresent=message.payload.trainPresent} --save device data
+          platforms[message.payload.priority] = {platformName=message.payload.platformName, trainCalled=false, trainPresent=message.payload.trainPresent} --save device data
           
-          common.sendMessage(message.payload.priority..":connect", station.routes) -- send routes to loading platforms 
+          common.sendMessage(message.payload.priority..":connect", settings.routes) -- send routes to loading platforms 
         end -- if (directive)
       end -- if (computer type)
 
@@ -95,10 +103,10 @@ end -- function
 
 function main()
   monitor.clear()
-  while true do --TEST
-    print("hi")
-    sleep(3)
-  end -- while
+  buttons = screen.buildButtons()
+
+  parallel.waitForAll(listenForClick, listenForMessages)
 end -- function
 
-parallel.waitForAll(main, listenForClick, listenForMessages)
+--start program
+main()

@@ -67,10 +67,7 @@ function listenForRedstone()
   while true do
     os.pullEvent("redstone") -- wait for a "redstone" event
 
-    local tp = redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent)
-    if tp then -- check if the train is present. only trrigger if changed
-      setTrainStatus(tp)
-    end -- train present if 
+    setTrainStatus(redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent))
 
 
   end -- while 
