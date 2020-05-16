@@ -78,7 +78,8 @@ end --function
 
 function setDestination(priority, destination)
   platforms[priority].destination = destination
-  common.sendMessage(priority..":setDestination", destination)
+  local message = {priority=priority, destination=destination}
+  common.sendMessage("setDestination", message)
 
 end -- setDestination
 
@@ -102,7 +103,7 @@ function listenForMessages()
 
       if message.computerType == "loading_platform" then -- Loading platform!
         if message.directive == "connect" then 
-          platforms[message.payload.priority] = {platformName=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
+          platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
           
           common.sendMessage(message.payload.priority..":connect", settings.routes) -- send routes to loading platforms 
         end -- if (directive connect)
@@ -111,12 +112,11 @@ function listenForMessages()
           if message.payload.trainPresent ~= platforms[message.payload.priority].trainPresent then
             --set status values 
             platforms[message.payload.priority].trainPresent = message.payload.trainPresent;
-            if message.payload.trainPresent == true then 
-              nextJob()
-            else 
-              --track no longer has destination 
+            if message.payload.trainPresent == false then 
+              --track no longer has destination
               platforms[message.payload.priority].destination = nil
-            end -- if else 
+            else -- if
+            nextJob()
 
           end -- if
 

@@ -8,7 +8,6 @@ station.computerType = "ticketmaster" --Do Not Change
 station.stationID = "base" --should match the routes on other configs
 station.yardID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the yard this is connected to 
 
-station.platformCount = 3
 station.screenSide = "top"
 station.modemSide = "right"
 station.modemChannel = 1 --THere should be one yard per channell

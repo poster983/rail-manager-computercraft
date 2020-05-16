@@ -35,7 +35,6 @@ function printString(string)
     printer.setPageTitle(string)
     printer.endPage()
   else
-    error("Could not create a page. Is there any paper and ink in the printer?")
     return false
   end
   
@@ -61,8 +60,10 @@ function listenForMessages()
           connectToParent()
         end -- directive reconnect
 
-        if message.directive == settings.priority..":setDestination" then -- set a sestination and print it
-          printTickets(message.payload);
+        if message.directive == "setDestination" and message.payload.priority == settings.priority =  then -- set a destination and print it
+          if printTickets(message.payload) == false then 
+            common.sendMessage("error", {priority=settings.priority, message="Could not print tickets"})
+          end -- if 
         end -- directive reconnect
       end -- if (computer type)
 
@@ -91,12 +92,9 @@ function setTrainStatus(isPresent)
 end -- function setTrainStatus
 
 function connectToParent()
+  print("Connecting to Parent")
   local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
-  while station.routes == nil do -- try and connect.  and send connection requests until connected
-    print("Trying to connect")
-    common.sendMessage("connect", message)
-    sleep(5)
-  end -- while
+  common.sendMessage("connect", message)
 end --function 
 
 function main() 
