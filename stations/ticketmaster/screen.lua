@@ -43,6 +43,8 @@ screen.buildButtons = function()
     --t:add(k, nil, bx, by, bx+buttonWidth-buttonPadding, by+buttonHeight-buttonPadding, colors.red, colors.lime)
     local but = button.create(k)
     but.setPos(bx,by)
+    but.setColor(settings.buttonColor)
+    but.setBlinkColor(settings.buttonClickColor)
     but.setSize(buttonWidth-buttonPadding,buttonHeight-buttonPadding)
     but.onClickReturn({type="destination", value=k})
     --add to array
@@ -61,13 +63,13 @@ end -- function alert
 
 --show current jobs
 screen.printJobCount = function(count)
-    monitor.setCursorPos(0,0)
+    monitor.setCursorPos(1,1)
     monitor.clearLine()
     if count == 1 then -- singular 
-        monitor.write(count .. "Train incoming")
+        monitor.write(count .. " Train incoming")
     end 
     if count > 1 then --plural 
-        monitor.write(count .. "Trains incoming")
+        monitor.write(count .. " Trains incoming")
     end 
 end --printJobCount
 

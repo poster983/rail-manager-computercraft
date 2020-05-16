@@ -55,7 +55,15 @@ function listenForMessages()
       if message.computerType == "ticketmaster" then -- Message from ticket master!
         if message.directive == settings.priority..":connect" then 
           station.routes = message.payload -- save routes
-        end -- if (directive)
+        end -- if (directive :connect)
+
+        if message.directive == "reconnect" then -- reconnect message to ticket master
+          connectToParent()
+        end -- directive reconnect
+
+        if message.directive == settings.priority..":setDestination" then -- set a sestination and print it
+          printTickets(message.payload);
+        end -- directive reconnect
       end -- if (computer type)
 
     end -- if
@@ -82,18 +90,18 @@ function setTrainStatus(isPresent)
   end -- if
 end -- function setTrainStatus
 
+function connectToParent()
+  local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
+  while station.routes == nil do -- try and connect.  and send connection requests until connected
+    print("Trying to connect")
+    common.sendMessage("connect", message)
+    sleep(5)
+  end -- while
+end --function 
 
 function main() 
     --get routes
-    local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
-    while station.routes == nil do -- try and connect.  and send connection requests until connected
-      print("Trying to connect")
-      common.sendMessage("connect", message)
-      sleep(5)
-    end -- routes
-
-
-
+    connectToParent()
 end --main
 
 parallel.waitForAll(main, listenForMessages, listenForRedstone)

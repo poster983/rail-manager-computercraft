@@ -7,10 +7,12 @@ local screen = require("./screen")
 local Queue = require("./Queue")
 
 
+
 local platforms = {} -- platform IDs and such 
 local jobs = Queue:new(); --create new job queue
 local summoned = Queue:new(); -- create a new queue for jobs that had trains summoned for them
 
+local monitor = peripheral.wrap( settings.screenSide )
 local modem = peripheral.wrap( settings.modemSide )
 modem.open(settings.modemChannel)
 
@@ -27,14 +29,16 @@ function nextJob()
 
   --check if any trains are avalable
   for i,pf in ipairs(platforms) do
-    if pf.trainPresent == true and pt.destination == nil then -- handle present trains and immediate departures 
+    if pf.trainPresent == true and pf.destination == nil then -- handle present trains and immediate departures 
       print("Send Destination to computer ")
       --Send destination info to that platform
+      local destination = nil
       if summoned:size() > 0 then --dequeue from summoned first
-        platforms[i].destination = summoned:dequeue()
+        destination = summoned:dequeue()
       else --dequeue from main jobs
-        platforms[i].destination = jobs:dequeue()
+        destination = jobs:dequeue()
       end --if else
+      setDestination(i, destination);
       screen.printJobCount(jobs:size() + summoned:size()) -- update screen
       return;
     end --if 
@@ -43,14 +47,14 @@ function nextJob()
     end -- if
   end -- for 
 
-  if platformEmpty then --call a train
-    if jobs:size() ~= 0 then 
+  if platformEmpty and jobs:size() ~= 0 and summoned:size() <= table.getn(platforms) then --call a train
       --SEND CALL FOR TRAIN FROM HUB TODOOOO
       print("Call Train")
       summoned:enqueue(jobs:dequeue()) --move to summoned queue
-    end -- if
-
+      return
   end --if
+
+  print("Will do nothing")
 
 end -- nextjob
 
@@ -58,7 +62,7 @@ end -- nextjob
 --adds jobs to the queue
 function newDestination(destination)
   print("Selected: " .. destination)
-  if platforms == {} then --if no loading platforms have connected
+  if next(platforms) == nil then --if no loading platforms have connected
     print("No loading platforms are connected")
     return;
   end -- if 
@@ -71,10 +75,18 @@ function newDestination(destination)
 
 end --function
 
+
+function setDestination(priority, destination)
+  platforms[priority].destination = destination
+  common.sendMessage(priority..":setDestination", destination)
+
+end -- setDestination
+
+
 function listenForClick() 
   while true do 
     local event = button.await(buttons)
-    if(event ~= nil and event.type = "destination") then 
+    if event ~= nil and event.type == "destination" then 
       newDestination(event.value)
     end -- if 
   end -- while
@@ -90,10 +102,28 @@ function listenForMessages()
 
       if message.computerType == "loading_platform" then -- Loading platform!
         if message.directive == "connect" then 
-          platforms[message.payload.priority] = {platformName=message.payload.platformName, trainCalled=false, trainPresent=message.payload.trainPresent} --save device data
+          platforms[message.payload.priority] = {platformName=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
           
           common.sendMessage(message.payload.priority..":connect", settings.routes) -- send routes to loading platforms 
-        end -- if (directive)
+        end -- if (directive connect)
+        if message.directive == "train_status" then 
+          --ruun next job only if trainPresent has changed
+          if message.payload.trainPresent ~= platforms[message.payload.priority].trainPresent then
+            --set status values 
+            platforms[message.payload.priority].trainPresent = message.payload.trainPresent;
+            if message.payload.trainPresent == true then 
+              nextJob()
+            else 
+              --track no longer has destination 
+              platforms[message.payload.priority].destination = nil
+            end -- if else 
+
+          end -- if
+
+          
+          
+          
+        end -- if directive train_status
       end -- if (computer type)
 
     end -- if
@@ -104,7 +134,7 @@ end -- function
 function main()
   monitor.clear()
   buttons = screen.buildButtons()
-
+  common.sendMessage("reconnect", nil) -- notify all child computers to reconnect
   parallel.waitForAll(listenForClick, listenForMessages)
 end -- function
 

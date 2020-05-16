@@ -4,9 +4,9 @@ settings.computerType = "loading_platform" --Do Not Change
 settings.priority = 1 --lower numbers get higher priority. also used as an id.  Must not collide with any other platform
 
 settings.platformName = "9 3/4"
-settings.printerSide = "left"
+settings.printerSide = "right"
 settings.cableSide = "back"
-settings.modemSide = "right"
+settings.modemSide = "top"
 settings.modemChannel = 1 
 
 settings.stationID = "base" -- should match the networkid in ticketmaster
