@@ -10,7 +10,7 @@ local modem = peripheral.wrap( settings.modemSide )
 modem.open(settings.modemChannel)
 
 local trainPresent = redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent);
-
+local destination = nil;
 local station = {} --load from network
 
 --Destination is a string matching the station route
@@ -57,11 +57,16 @@ function listenForMessages()
            
         end -- if (directive :connect)
 
-        if message.directive == "reconnect" then -- reconnect message to ticket master
+        if message.directive == "reconnect_parent" then -- reconnect message to ticket master
           connectToParent()
         end -- directive reconnect
 
+        if message.directive == "reconnect_infoboards" then -- reconnect message to ticket master
+          connectToInfoboards()
+        end -- directive reconnect
+
         if message.directive == "setDestination" and message.payload.priority == settings.priority then -- set a destination and print it
+          destination = message.payload.destination
           if printTickets(message.payload.destination) == false then 
             common.sendMessage("error", {priority=settings.priority, message="Could not print tickets"})
           end -- if 
@@ -86,8 +91,11 @@ end -- function listenForRedstone
 
 function setTrainStatus(isPresent) 
   if isPresent ~= trainPresent then 
+    if isPresent == false then 
+      destination = nil -- reset to nil
+    end -- if
     trainPresent = isPresent
-    local message = {priority=settings.priority, trainPresent=trainPresent}
+    local message = {priority=settings.priority, trainPresent=trainPresent, destination=destination}
     common.sendMessage("train_status", message)
   end -- if
 end -- function setTrainStatus
@@ -95,12 +103,19 @@ end -- function setTrainStatus
 function connectToParent()
   print("Connecting to Parent")
   local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
-  common.sendMessage("connect", message)
+  common.sendMessage("connect_parent", message)
+end --function 
+
+function connectToInfoboards()
+  print("Connecting to Parent")
+  local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
+  common.sendMessage("connect_infoboards", message)
 end --function 
 
 function main() 
     --get routes
     connectToParent()
+    connectToInfoboards()
 end --main
 
 parallel.waitForAll(main, listenForMessages, listenForRedstone)

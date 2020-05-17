@@ -26,7 +26,7 @@ function nextJob()
   end --if 
 
   local platformEmpty = false --there exists some empty platform that we could call a train to
-
+  local numOfPresentTrains = 0 -- total trains in the station
   --check if any trains are avalable
   for i,pf in ipairs(platforms) do
     if pf.trainPresent == true and pf.destination == nil then -- handle present trains and immediate departures 
@@ -44,10 +44,12 @@ function nextJob()
     end --if 
     if pf.trainPresent == false then 
       platformEmpty = true
+    else 
+      numOfPresentTrains = numOfPresentTrains +1
     end -- if
   end -- for 
 
-  if platformEmpty and jobs:size() ~= 0 and summoned:size() <= table.getn(platforms) then --call a train
+  if platformEmpty and jobs:size() ~= 0 and summoned:size() < table.getn(platforms)-numOfPresentTrains then --call a train
       --SEND CALL FOR TRAIN FROM HUB TODOOOO
       print("Call Train")
       summoned:enqueue(jobs:dequeue()) --move to summoned queue
@@ -68,7 +70,7 @@ function newDestination(destination)
   end -- if 
 
   jobs:enqueue(destination)
-  screen.printJobCount(jobs:size())
+  screen.printJobCount(jobs:size() + summoned:size())
 
   -- try and run the job
   nextJob()
@@ -102,7 +104,7 @@ function listenForMessages()
       print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
 
       if message.computerType == "loading_platform" then -- Loading platform!
-        if message.directive == "connect" then 
+        if message.directive == "connect_parent" then 
           platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
           
           common.sendMessage(message.payload.priority..":connect", settings.routes) -- send routes to loading platforms 
@@ -119,10 +121,6 @@ function listenForMessages()
             nextJob()
 
           end -- if
-
-          
-          
-          
         end -- if directive train_status
       end -- if (computer type)
 
@@ -134,7 +132,7 @@ end -- function
 function main()
   monitor.clear()
   buttons = screen.buildButtons()
-  common.sendMessage("reconnect", nil) -- notify all child computers to reconnect
+  common.sendMessage("reconnect_parent", nil) -- notify all child computers to reconnect
   parallel.waitForAll(listenForClick, listenForMessages)
 end -- function
 
