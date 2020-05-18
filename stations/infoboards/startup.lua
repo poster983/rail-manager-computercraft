@@ -14,7 +14,7 @@ local padding = 1;
 
 local platforms = {} -- departures array 
 
-local alertQueue = Queue:new()
+local alertQueue = Queue:new();
 
 
 function buildDepartures() 
@@ -70,7 +70,7 @@ function runAlerts()
     if alertParams.holdTime ~= nil then 
         common.wait(alertParams.holdTime, handleMessages)--dont clear for holdTime 
     end -- if
-    alertParams:dequeue() -- pop from front
+    alertQueue:dequeue() -- pop from front
 
     --check if we need to run this again 
     if alertQueue:size() > 0 then 
@@ -131,7 +131,7 @@ function main()
     
 
     alert("Connecting", colors.red)
-    common.sendMessage("reconnect_infoboards", nil) -- notify all child computers to reconnect
+    common.sendMessage("reconnect", nil) -- notify all child computers to reconnect
 
     
 end -- main

@@ -57,12 +57,8 @@ function listenForMessages()
            
         end -- if (directive :connect)
 
-        if message.directive == "reconnect_parent" then -- reconnect message to ticket master
+        if message.directive == "reconnect" then -- reconnect message to ticket master
           connectToParent()
-        end -- directive reconnect
-
-        if message.directive == "reconnect_infoboards" then -- reconnect message to ticket master
-          connectToInfoboards()
         end -- directive reconnect
 
         if message.directive == "setDestination" and message.payload.priority == settings.priority then -- set a destination and print it
@@ -70,6 +66,11 @@ function listenForMessages()
           if printTickets(message.payload.destination) == false then 
             common.sendMessage("error", {priority=settings.priority, message="Could not print tickets"})
           end -- if 
+        end -- directive reconnect
+
+      elseif message.computerType == "infoboard" then --infoboard directives
+        if message.directive == "reconnect" then -- reconnect message to infoboard
+          connectToInfoboards()
         end -- directive reconnect
       end -- if (computer type)
 
