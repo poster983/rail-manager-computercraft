@@ -18,16 +18,17 @@ local alertQueue = Queue:new();
 
 
 function buildDepartures() 
-    local oldterm = term.redirect( monitor )
+    
     for y=1,h,1 do --animate background
+        local oldterm = term.redirect( monitor )
         term.setCursorPos(1,y)
         term.clearLine()
         
         paintutils.drawBox(1,y,w,y+1, settings.bgColor)
-        
+        term.redirect(oldterm)
         common.wait(0.1, handleMessages) -- non event blocking wait
     end -- for
-    term.redirect(oldterm)
+    
     monitor.setCursorPos(1+padding,1)
     monitor.write("Platform")
     monitor.setCursorPos(w-(10+padding),1) --5 is the length of the word departures 
@@ -38,7 +39,7 @@ function buildDepartures()
     for i,pf in ipairs(platforms) do
         if pf.destination ~= nil then 
             monitor.setCursorPos(1+padding,y)
-            monitor.clearLine()
+            --monitor.clearLine()
 
             
             -- print words out
@@ -133,7 +134,8 @@ function handleMessages(rawEvent)
                 if message.directive == "train_status" then 
 
                     if message.payload.trainPresent == false and platforms[message.payload.priority].destination ~=nil then --send departing message 
-                        alert("Platform "..platforms[message.payload.priority].name.." Departing! Stand clear!", colors.red, 2)
+                        alert("Stand Clear!", colors.orange, 1)
+                        alert("Platform "..platforms[message.payload.priority].name.." Departing!", colors.red, 2)
                     end -- if
                     if platforms[message.payload.priority].trainPresent == true and message.payload.trainPresent == false then -- wipe destination
                         platforms[message.payload.priority].destination = nil;
