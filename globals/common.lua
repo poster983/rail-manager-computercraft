@@ -22,5 +22,22 @@ common.sendMessage = function(directive, payload)
   peripheral.wrap(settings.modemSide).transmit(settings.modemChannel, settings.modemChannel, message)
 end --function
 
+--Event passthrough is called if an event is recieved and it is not for this timer Passes an event array to the function
+common.wait = function(time, eventPassthrough)
+  local timer = os.startTimer(time)
+  
+  while true do
+    local event = {os.pullEvent()}
+    
+    if (event[1] == "timer" and event[2] == timer) then
+      break
+    else
+      eventPassthrough(event) -- a custom function in which you would deal with received events
+    end --if else
+  end -- while
+
+
+end --function 
+
   
 return common;

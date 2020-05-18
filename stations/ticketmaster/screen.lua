@@ -19,7 +19,7 @@ screen.buildButtons = function()
   local buttons = {}
   local buttonPadding = 2;
   local buttonWidth = (w/2);
-  local buttonHeight = (h/table.getn(routeKeys));
+  local buttonHeight = (h/table.getn(routeKeys))*2;
 
   print(buttonWidth, buttonHeight)
   local x=0 --col

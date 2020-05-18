@@ -1,5 +1,5 @@
 local settings = require("./settings")
---local Queue = require("./Queue")
+local Queue = require("./Queue")
 local common = require("./common")
 
 
@@ -13,6 +13,8 @@ local w, h = monitor.getSize()
 local padding = 1;
 
 local platforms = {} -- departures array 
+
+local alertQueue = Queue:new()
 
 
 function buildDepartures() 
@@ -36,39 +38,70 @@ function buildDepartures()
     
 end -- buildDepartures
 
-function alert(message, color) 
+--adds to alert queue and 
+function alert(message, color, holdTime) 
+    --add to queue
+    local queueObj = {message=message, color=color, holdTime=holdTime}
+    alertQueue:enqueue(queueObj)
+
+    if alertQueue:size() == 1 then 
+        runAlerts()
+    end -- if
+    
+end -- alert
+
+--only to be used with alert()
+function runAlerts() 
+    --work on front of queue 
+    local alertParams = alertQueue:front()
+
     local oldterm = term.redirect( monitor )
 
     for y=h,1,-1 do --animate box
-        paintutils.drawBox(1,y,w,y+1, color)
-        sleep(0.1)
+        paintutils.drawBox(1,y,w,y+1, alertParams.color)
+        common.wait(0.1, handleMessages) -- non event blocking wait
     end -- for
     local oldx, oldy = term.getCursorPos()
-    term.setCursorPos(math.floor((w/2)-(string.len(message)/2)+0.5),h/2)
-    term.write(message)
+    term.setCursorPos(math.floor((w/2)-(string.len(alertParams.message)/2)+0.5),h/2)
+    term.write(alertParams.message)
     term.setCursorPos(oldx,oldy)
 
     term.redirect(oldterm)
-end -- alert
+    if alertParams.holdTime ~= nil then 
+        common.wait(alertParams.holdTime, handleMessages)--dont clear for holdTime 
+    end -- if
+    alertParams:dequeue() -- pop from front
 
-function listenForMessages()
-    while true do 
+    --check if we need to run this again 
+    if alertQueue:size() > 0 then 
+        runAlerts()
+    else -- redraw main screen 
+        --buildDepartures()
+    end -- if
+
+end -- runAlerts 
+
+
+--actually handles a raw message.  use with the common.wait command 
+function handleMessages(rawEvent)
+    if rawEvent[1] == "modem_message" then -- only run if modem message 
         local event, modemSide, senderChannel, 
-        replyChannel, message, senderDistance = os.pullEvent("modem_message")
+                replyChannel, message, senderDistance = unpack(rawEvent)
         if message ~= nil and message.yardID == settings.yardID and message.stationID == settings.stationID then
             print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
             if message.computerType == "loading_platform" then
 
                 if message.directive == "connect_infoboards" then 
                     platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
-                    buildDepartures()
+                    if alertQueue:size() == 0 then 
+                        buildDepartures()
+                    end -- if 
                 end -- if (directive connect)
                 
                 if message.directive == "train_status" then 
                     if platforms[message.payload.priority].destination == nil and message.payload.destination ~=nil then --departure!
-                        alert("New Departure", colors.red)
-                        sleep(0.5) -- update to be async 
-                        alert("Platform "..platforms[message.payload.priority].platformName, colors.blue)
+                        alert("New Departure", colors.red, 0.5)
+                        alert("Platform "..platforms[message.payload.priority].platformName, colors.blue, 1)
                     end --if
                     platforms[message.payload.priority].destination = message.payload.destination
                     platforms[message.payload.priority].trainPresent = message.payload.trainPresent
@@ -77,6 +110,13 @@ function listenForMessages()
                 end -- if directive train_status
             end -- if commputer type
         end -- if
+    end -- if 
+end -- handleMessages
+
+function listenForMessages()
+    while true do 
+        local event = {os.pullEvent("modem_message")}
+        handleMessages(event)
     end -- while 
 end --function 
 
@@ -88,9 +128,12 @@ function main()
     paintutils.drawFilledBox(1,1,w,h, colors.black)
     term.redirect(oldterm)
 
+    
+
     alert("Connecting", colors.red)
     common.sendMessage("reconnect_infoboards", nil) -- notify all child computers to reconnect
 
-    parallel.waitForAll( listenForMessages)
+    
 end -- main
-main()
+
+parallel.waitForAll(main, listenForMessages)
