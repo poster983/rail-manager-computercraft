@@ -10,7 +10,9 @@ settings.screenScale = 0.9
 settings.screenSide = "top"
 settings.modemSide = "right"
 settings.modemChannel = 1 --THere should be one yard per channell
--- Route Table (Chnage for each station)
+
+
+settings.bgColor = colors.black
 
 
 return settings;

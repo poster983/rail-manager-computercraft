@@ -18,14 +18,16 @@ local alertQueue = Queue:new();
 
 
 function buildDepartures() 
-    monitor.clear()
-    
+    local oldterm = term.redirect( monitor )
     for y=1,h,1 do --animate background
-        local term.redirect = term.redirect( monitor )
-        paintutils.drawBox(1,y,w,y+1, colors.black)
-        term.redirect(term.redirect)
+        term.setCursorPos(1,y)
+        term.clearLine()
+        
+        paintutils.drawBox(1,y,w,y+1, settings.bgColor)
+        
         common.wait(0.1, handleMessages) -- non event blocking wait
     end -- for
+    term.redirect(oldterm)
     monitor.setCursorPos(1+padding,1)
     monitor.write("Platform")
     monitor.setCursorPos(w-(10+padding),1) --5 is the length of the word departures 
@@ -79,14 +81,18 @@ function runAlerts()
     --work on front of queue 
     local alertParams = alertQueue:front()
 
-    
+    local oldterm = term.redirect( monitor )
 
     for y=h,1,-1 do --animate box
-        local oldterm = term.redirect( monitor )
+        term.setCursorPos(1,y)
+        term.clearLine()
+        
         paintutils.drawBox(1,y,w,y+1, alertParams.color)
-        term.redirect(oldterm)
+        
         common.wait(0.1, handleMessages) -- non event blocking wait
     end -- for
+
+    term.redirect(oldterm)
     local oldx, oldy = monitor.getCursorPos()
     monitor.setCursorPos(math.floor((w/2)-(string.len(alertParams.message)/2)+0.5),h/2)
     monitor.write(alertParams.message)
@@ -125,14 +131,19 @@ function handleMessages(rawEvent)
                 end -- if (directive connect)
                 
                 if message.directive == "train_status" then 
-                    
+
+                    if message.payload.trainPresent == false and platforms[message.payload.priority].destination ~=nil then --send departing message 
+                        alert("Platform "..platforms[message.payload.priority].name.." Departing! Stand clear!", colors.red, 2)
+                    end -- if
                     if platforms[message.payload.priority].trainPresent == true and message.payload.trainPresent == false then -- wipe destination
                         platforms[message.payload.priority].destination = nil;
                     end -- if
                     
                     platforms[message.payload.priority].trainPresent = message.payload.trainPresent
                     -- update screen 
-                    buildDepartures()
+                    if alertQueue:size() == 0 then 
+                        buildDepartures()
+                    end -- if 
                 end -- if directive train_status
 
             elseif message.computerType == "ticketmaster" then 
@@ -140,8 +151,10 @@ function handleMessages(rawEvent)
                     platforms[message.payload.priority].destination = message.payload.destination
                     
                     alert("New Departure", colors.red, 0.5)
-                    alert("Platform "..platforms[message.payload.priority].platformName, colors.blue, 1)
-                    buildDepartures()
+                    alert("Platform "..platforms[message.payload.priority].name, colors.blue, 1)
+                    if alertQueue:size() == 0 then 
+                        buildDepartures()
+                    end -- if 
                 
                 end -- if directive setDestination
 
@@ -163,7 +176,7 @@ function main()
     --clear the screen
     monitor.clear()
     local oldterm = term.redirect( monitor )
-    paintutils.drawFilledBox(1,1,w,h, colors.black)
+    paintutils.drawFilledBox(1,1,w,h, settings.bgColor)
     term.redirect(oldterm)
 
     
