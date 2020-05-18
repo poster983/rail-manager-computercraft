@@ -31,7 +31,7 @@ end
 function printString(string)
   local ready = printer.newPage()
   if ready then
-    printer.write(string)
+    --printer.write(string)
     printer.setPageTitle(string)
     printer.endPage()
   else

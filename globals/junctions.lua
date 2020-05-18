@@ -5,7 +5,7 @@ local junctions = {
     doofEntrance="Doof Entrance",
     villageEntrance="Village Entrance",
     villageWestboundUTurn="Village Westbound UTurn",
-    baseEntrance="Base Entrance (railcraft sucks)", 
+    baseEntrance="Base Entrance", 
     yardNorthboundUTurn="Yard Northbound UTurn",
     yardSouthboundUTurn="Yard Southbound UTurn"
 
