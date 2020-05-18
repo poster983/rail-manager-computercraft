@@ -132,7 +132,7 @@ end -- function
 function main()
   monitor.clear()
   buttons = screen.buildButtons()
-  common.sendMessage("reconnect_parent", nil) -- notify all child computers to reconnect
+  common.sendMessage("reconnect", nil) -- notify all child computers to reconnect
   parallel.waitForAll(listenForClick, listenForMessages)
 end -- function
 
