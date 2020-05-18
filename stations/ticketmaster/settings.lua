@@ -15,7 +15,8 @@ station.modemChannel = 1 --THere should be one yard per channell
 station.routes = {}
 station.routes["Doof"] = {junctions.villageEntrance, junctions.doofEntrance};
 station.routes["Village"] = {junctions.villageEntrance};
-station.routes["All"] = {junctions.villageEntrance, junctions.doofEntrance, junctions.hubEntrance, junctions.villageWestboundUTurn};
+station.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
+station.routes["Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn};
 
 station.buttonColor = colors.blue
 station.buttonClickColor = colors.red

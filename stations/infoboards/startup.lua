@@ -1,6 +1,6 @@
 local settings = require("./settings")
-local Queue = require("./Queue")
---local common = require("./common")
+--local Queue = require("./Queue")
+local common = require("./common")
 
 
 local modem = peripheral.wrap( settings.modemSide )
@@ -56,6 +56,7 @@ function listenForMessages()
         local event, modemSide, senderChannel, 
         replyChannel, message, senderDistance = os.pullEvent("modem_message")
         if message ~= nil and message.yardID == settings.yardID and message.stationID == settings.stationID then
+            print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
             if message.computerType == "loading_platform" then
 
                 if message.directive == "connect_infoboards" then 
@@ -83,9 +84,12 @@ end --function
 function main() 
     --clear the screen
     monitor.clear()
+    local oldterm = term.redirect( monitor )
     paintutils.drawFilledBox(1,1,w,h, colors.black)
+    term.redirect(oldterm)
 
     alert("Connecting", colors.red)
+    common.sendMessage("reconnect_infoboards", nil) -- notify all child computers to reconnect
 
     parallel.waitForAll( listenForMessages)
 end -- main

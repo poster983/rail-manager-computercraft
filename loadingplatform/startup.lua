@@ -107,7 +107,7 @@ function connectToParent()
 end --function 
 
 function connectToInfoboards()
-  print("Connecting to Parent")
+  print("Connecting to Infoboards")
   local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
   common.sendMessage("connect_infoboards", message)
 end --function 
