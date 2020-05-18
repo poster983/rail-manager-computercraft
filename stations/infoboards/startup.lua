@@ -25,15 +25,32 @@ function buildDepartures()
     monitor.write("Departures")
     
     local y=3
+    --show platforms with destinations at the top
     for i,pf in ipairs(platforms) do
-        
-        monitor.setCursorPos(1+padding,y)
-        monitor.clearLine()
+        if pf.destination ~= nil then 
+            monitor.setCursorPos(1+padding,y)
+            monitor.clearLine()
 
-        -- print words out
-        monitor.write(pf.name .. ": " .. pf.destination)
+            
+            -- print words out
+            monitor.write(pf.name .. ": " .. pf.destination)
 
-        y=y+1
+
+            y=y+1
+        end --if
+    end --for
+    --platforms with no destination 
+    for i,pf in ipairs(platforms) do
+        if pf.destination == nil then 
+            monitor.setCursorPos(1+padding,y)
+            monitor.clearLine()
+
+            
+            -- print words out
+            monitor.write(pf.name .. ": ...")
+            
+            y=y+1
+        end --if
     end --for
     
 end -- buildDepartures
