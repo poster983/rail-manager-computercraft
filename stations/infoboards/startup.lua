@@ -18,13 +18,20 @@ local alertQueue = Queue:new();
 
 
 function buildDepartures() 
+    monitor.clear()
+    
+    for y=1,h,1 do --animate background
+        local term.redirect = term.redirect( monitor )
+        paintutils.drawBox(1,y,w,y+1, colors.black)
+        term.redirect(term.redirect)
+        common.wait(0.1, handleMessages) -- non event blocking wait
+    end -- for
     monitor.setCursorPos(1+padding,1)
-    monitor.clearLine()
     monitor.write("Platform")
     monitor.setCursorPos(w-(10+padding),1) --5 is the length of the word departures 
     monitor.write("Departures")
     
-    local y=3
+    local y=2
     --show platforms with destinations at the top
     for i,pf in ipairs(platforms) do
         if pf.destination ~= nil then 
@@ -48,7 +55,7 @@ function buildDepartures()
             
             -- print words out
             monitor.write(pf.name .. ": ...")
-            
+
             y=y+1
         end --if
     end --for
@@ -72,18 +79,20 @@ function runAlerts()
     --work on front of queue 
     local alertParams = alertQueue:front()
 
-    local oldterm = term.redirect( monitor )
+    
 
     for y=h,1,-1 do --animate box
+        local oldterm = term.redirect( monitor )
         paintutils.drawBox(1,y,w,y+1, alertParams.color)
+        term.redirect(oldterm)
         common.wait(0.1, handleMessages) -- non event blocking wait
     end -- for
-    local oldx, oldy = term.getCursorPos()
-    term.setCursorPos(math.floor((w/2)-(string.len(alertParams.message)/2)+0.5),h/2)
-    term.write(alertParams.message)
-    term.setCursorPos(oldx,oldy)
+    local oldx, oldy = monitor.getCursorPos()
+    monitor.setCursorPos(math.floor((w/2)-(string.len(alertParams.message)/2)+0.5),h/2)
+    monitor.write(alertParams.message)
+    monitor.setCursorPos(oldx,oldy)
 
-    term.redirect(oldterm)
+    
     if alertParams.holdTime ~= nil then 
         common.wait(alertParams.holdTime, handleMessages)--dont clear for holdTime 
     end -- if
@@ -116,16 +125,28 @@ function handleMessages(rawEvent)
                 end -- if (directive connect)
                 
                 if message.directive == "train_status" then 
-                    if platforms[message.payload.priority].destination == nil and message.payload.destination ~=nil then --departure!
-                        alert("New Departure", colors.red, 0.5)
-                        alert("Platform "..platforms[message.payload.priority].platformName, colors.blue, 1)
-                    end --if
-                    platforms[message.payload.priority].destination = message.payload.destination
+                    
+                    if platforms[message.payload.priority].trainPresent == true and message.payload.trainPresent == false then -- wipe destination
+                        platforms[message.payload.priority].destination = nil;
+                    end -- if
+                    
                     platforms[message.payload.priority].trainPresent = message.payload.trainPresent
                     -- update screen 
                     buildDepartures()
                 end -- if directive train_status
+
+            elseif message.computerType == "ticketmaster" then 
+                if message.directive == "setDestination" then -- set a destination and print it
+                    platforms[message.payload.priority].destination = message.payload.destination
+                    
+                    alert("New Departure", colors.red, 0.5)
+                    alert("Platform "..platforms[message.payload.priority].platformName, colors.blue, 1)
+                    buildDepartures()
+                
+                end -- if directive setDestination
+
             end -- if commputer type
+
         end -- if
     end -- if 
 end -- handleMessages
