@@ -7,7 +7,7 @@ local junctions = {
     villageWestboundUTurn="Village Westbound UTurn",
     baseEntrance="Base Entrance", 
     yardNorthboundUTurn="Yard Northbound UTurn",
-    yardSouthboundUTurn="Yard Southbound UTurn"
+    yardSouthboundUTurn="Yard Southbound UTurn",
 
   }
   
