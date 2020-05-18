@@ -82,18 +82,19 @@ function runAlerts()
     --work on front of queue 
     local alertParams = alertQueue:front()
 
-    local oldterm = term.redirect( monitor )
+    
 
     for y=h,1,-1 do --animate box
+        local oldterm = term.redirect( monitor )
         term.setCursorPos(1,y)
         term.clearLine()
         
         paintutils.drawBox(1,y,w,y+1, alertParams.color)
-        
+        term.redirect(oldterm)
         common.wait(0.1, handleMessages) -- non event blocking wait
     end -- for
 
-    term.redirect(oldterm)
+    
     local oldx, oldy = monitor.getCursorPos()
     monitor.setCursorPos(math.floor((w/2)-(string.len(alertParams.message)/2)+0.5),h/2)
     monitor.write(alertParams.message)
