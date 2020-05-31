@@ -10,6 +10,8 @@ local modem = peripheral.wrap( settings.modemSide )
 modem.open(settings.modemChannel)
 
 local trainPresent = redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent);
+local trainReady = false;
+
 local destination = nil;
 local station = {} --load from network
 
@@ -68,6 +70,12 @@ function listenForMessages()
           end -- if 
         end -- directive reconnect
 
+        if message.directive == "sendTrain" and message.payload == settings.priority then -- Send the train off
+          redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
+          
+          redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
+        end -- end sendtrain
+
       elseif message.computerType == "infoboard" then --infoboard directives
         if message.directive == "reconnect" then -- reconnect message to infoboard
           connectToInfoboards()
@@ -82,34 +90,34 @@ function listenForRedstone()
 
   while true do
     os.pullEvent("redstone") -- wait for a "redstone" event
-
-    setTrainStatus(redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent))
+    trainReady = redstone.testBundledInput(settings.cableSide, settings.redstone.trainReady)
+    trainPresent = redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent)
+    sendTrainStatus()
 
 
   end -- while 
 end -- function listenForRedstone
 
 
-function setTrainStatus(isPresent) 
-  if isPresent ~= trainPresent then 
-    if isPresent == false then 
-      destination = nil -- reset to nil
-    end -- if
-    trainPresent = isPresent
-    local message = {priority=settings.priority, trainPresent=trainPresent, destination=destination}
-    common.sendMessage("train_status", message)
+function sendTrainStatus() 
+
+  if trainPresent == false then 
+    destination = nil -- reset to nil
   end -- if
+  local message = {priority=settings.priority, trainPresent=trainPresent, trainReady=trainReady destination=destination}
+  common.sendMessage("train_status", message)
+
 end -- function setTrainStatus
 
 function connectToParent()
   print("Connecting to Parent")
-  local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
+  local message = {platformName=settings.platformName, trainReady=trainReady,  priority=settings.priority, trainPresent=trainPresent}
   common.sendMessage("connect_parent", message)
 end --function 
 
 function connectToInfoboards()
   print("Connecting to Infoboards")
-  local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
+  local message = {platformName=settings.platformName, trainReady=trainReady, priority=settings.priority, trainPresent=trainPresent}
   common.sendMessage("connect_infoboards", message)
 end --function 
 

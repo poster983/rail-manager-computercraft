@@ -12,6 +12,8 @@ local platforms = {} -- platform IDs and such
 local jobs = Queue:new(); --create new job queue
 local summoned = Queue:new(); -- create a new queue for jobs that had trains summoned for them
 
+local send = Queue:new();
+
 local monitor = peripheral.wrap( settings.screenSide )
 local modem = peripheral.wrap( settings.modemSide )
 modem.open(settings.modemChannel)
@@ -77,13 +79,38 @@ function newDestination(destination)
 
 end --function
 
-
+--tell platform computer to print out the tickets 
 function setDestination(priority, destination)
   platforms[priority].destination = destination
   local message = {priority=priority, destination=destination}
   common.sendMessage("setDestination", message)
 
 end -- setDestination
+
+--ADD TO TRAIN SEND QUEUE
+function sendTrain(platformPriority) 
+  if platforms[platformPriority].trainPresent == true then 
+    send:enqueue(platformPriority)
+
+    if send:size() == 1 then 
+      while send:size() ~=0 do 
+        local pf = send:front()
+
+        common.sendMessage("sendTrain", pf)
+
+        --todo finish
+
+      end -- while
+    end -- if size
+  end --if
+
+end -- send train
+
+--work through the queue 
+function sendNextTrain()
+
+
+end --sendNextTrain
 
 
 function listenForClick() 
@@ -105,11 +132,17 @@ function listenForMessages()
 
       if message.computerType == "loading_platform" then -- Loading platform!
         if message.directive == "connect_parent" then 
-          platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
+          platforms[message.payload.priority] = {name=message.payload.platformName, trainReady=message.payload.trainReady,  destination=nil, trainPresent=message.payload.trainPresent} --save device data
           
           common.sendMessage(message.payload.priority..":connect", settings.routes) -- send routes to loading platforms 
         end -- if (directive connect)
         if message.directive == "train_status" then 
+          
+          platforms[message.payload.priority].trainReady = message.payload.trainReady;
+          if message.payload.trainready == true then 
+            sendTrain(message.payload.priority);
+          end --if 
+
           --ruun next job only if trainPresent has changed
           if message.payload.trainPresent ~= platforms[message.payload.priority].trainPresent then
             --set status values 

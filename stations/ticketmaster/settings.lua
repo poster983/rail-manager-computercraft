@@ -17,6 +17,10 @@ station.routes["Doof"] = {junctions.villageEntrance, junctions.doofEntrance};
 station.routes["Village"] = {junctions.villageEntrance};
 station.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
 station.routes["Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn};
+station.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance}
+
+settings.autogo = false -- will not wait for 'trainReady' to pulse from the loading platform
+--settings.trainSendDelay = 3 -- num of seconds before sending the next train 
 
 station.buttonColor = colors.blue
 station.buttonClickColor = colors.red

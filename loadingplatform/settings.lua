@@ -15,10 +15,11 @@ settings.yardID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the yard
 
 settings.redstone = {
     --input
+    trainReady=colors.orange, -- on if train is ready to go.  should pulse. may not be used if used in a yard or if autogo is set to false
     trainPresent=colors.black, -- in if true
 
     --output
-    sendTrain=colors.orange, -- output pulse  
+    sendTrain=colors.blue, -- output pulse  
 
 }
 return settings
