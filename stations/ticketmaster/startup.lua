@@ -91,14 +91,22 @@ end -- setDestination
 
 --ADD TO TRAIN SEND QUEUE
 function sendTrain(platformPriority) 
+  --check if platform is already in the queue
+  if platforms[platformPriority].sent == true then 
+    return false
+  end -- if
+
+  --check if a train is actually present
   if platforms[platformPriority].trainPresent == true then 
     send:enqueue(platformPriority)
-
+    platforms[platformPriority].sent = true
+    return true
     if holdTrains == false then -- send next train only if it is safe
       sendNextTrain()
+      
     end --if 
   end --if
-
+  return false
 end -- send train
 
 --work through the queue 
@@ -106,7 +114,7 @@ function sendNextTrain()
   holdTrains=false -- reset locker
   if send:size() >0 then
     local pf = send:dequeue() -- pop from queue
-
+    platforms[pf].sent = false
     --send train
     common.sendMessage("sendTrain", pf)
     holdTrains = true
@@ -140,13 +148,13 @@ function listenForMessages()
         if message.directive == "train_status" then 
           
           platforms[message.payload.priority].trainReady = message.payload.trainReady;
-          if message.payload.trainready == true and message.payload.destination ~=nil then 
+          if message.payload.trainReady == true and message.payload.destination ~=nil then 
             sendTrain(message.payload.priority);
           end --if 
 
           --ruun next job only if trainPresent has changed
           if message.payload.trainPresent ~= platforms[message.payload.priority].trainPresent then
-            --set status values 
+            --set status value s
             platforms[message.payload.priority].trainPresent = message.payload.trainPresent;
             if message.payload.trainPresent == false then 
               --track no longer has destination

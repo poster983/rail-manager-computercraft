@@ -48,6 +48,13 @@ end -- dequeue
 
 --getters 
 
+function Queue:iterator() 
+  if self._front == nil then 
+    return nil;
+  end -- if
+  return self._front;
+end --frony
+
 function Queue:front() 
   if self._front == nil then 
     return nil;

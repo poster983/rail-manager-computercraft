@@ -45,10 +45,10 @@ function printString(string)
 end 
 
 
-function listenForMessages() 
-  while true do 
+function handleMessages(event) 
+  if event[1] == "modem_message" then 
     local event, modemSide, senderChannel, 
-    replyChannel, message, senderDistance = os.pullEvent("modem_message")
+                replyChannel, message, senderDistance = unpack(event)
 
     if message ~= nil and message.yardID == settings.yardID and message.stationID == settings.stationID then -- this is a message for us 
       print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
@@ -72,7 +72,7 @@ function listenForMessages()
 
         if message.directive == "sendTrain" and message.payload == settings.priority then -- Send the train off
           redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
-          --TO DO. ADD DELAY
+          common.wait(0.5, handleEvents)
           redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
         end -- end sendtrain
 
@@ -83,13 +83,12 @@ function listenForMessages()
       end -- if (computer type)
 
     end -- if
-  end -- while
+  end -- if modem_message
 end --listenForMessages
 
-function listenForRedstone() 
+function handleRedstoneEvent(event) 
 
-  while true do
-    os.pullEvent("redstone") -- wait for a "redstone" event
+  if event[1] == "redstone" then 
     trainReady = redstone.testBundledInput(settings.cableSide, settings.redstone.trainReady)
     trainPresent = redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent)
     sendTrainStatus()
@@ -97,6 +96,19 @@ function listenForRedstone()
 
   end -- while 
 end -- function listenForRedstone
+
+--exists for the wait function
+function handleEvents(event) 
+  handleRedstoneEvent(event)
+  handleMessages(event)
+end 
+
+function listenForEvents() 
+  while true do 
+    local event = {os.pullEvent()}
+    handleEvents(event)
+  end -- while 
+end -- fucntion 
 
 
 function sendTrainStatus() 
@@ -127,4 +139,4 @@ function main()
     connectToInfoboards()
 end --main
 
-parallel.waitForAll(main, listenForMessages, listenForRedstone)
+parallel.waitForAll(main, listenForEvents)
