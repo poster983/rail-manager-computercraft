@@ -5,7 +5,7 @@ settings.priority = 1 --lower numbers get higher priority. also used as an id.  
 
 settings.platformName = "9 3/4"
 settings.printerSide = "left"
-settings.cableSide = "back"
+settings.cableSide = "back" -- redstone cable
 settings.modemSide = "top"
 settings.modemChannel = 1 
 

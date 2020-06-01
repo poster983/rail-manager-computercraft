@@ -1,3 +1,5 @@
+-- REQUIRES https://github.com/Siarko/ButtonApi
+-- WGET it from: https://raw.githubusercontent.com/Siarko/ButtonApi/master/button
 local settings = require("./settings")
 local common = require("./common")
 os.loadAPI("button")

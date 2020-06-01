@@ -72,7 +72,7 @@ function listenForMessages()
 
         if message.directive == "sendTrain" and message.payload == settings.priority then -- Send the train off
           redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
-          
+          --TO DO. ADD DELAY
           redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
         end -- end sendtrain
 

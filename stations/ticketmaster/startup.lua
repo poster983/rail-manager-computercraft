@@ -1,6 +1,5 @@
 --Entrypoint for stations destination chooser
--- REQUIRES https://github.com/Siarko/ButtonApi
--- WGET it from: https://raw.githubusercontent.com/Siarko/ButtonApi/master/button
+
 local settings = require("./settings")
 local common = require("./common")
 local screen = require("./screen")
@@ -13,6 +12,9 @@ local jobs = Queue:new(); --create new job queue
 local summoned = Queue:new(); -- create a new queue for jobs that had trains summoned for them
 
 local send = Queue:new();
+local holdTrains = false; 
+
+local lineClearPulse = false;
 
 local monitor = peripheral.wrap( settings.screenSide )
 local modem = peripheral.wrap( settings.modemSide )
@@ -92,24 +94,23 @@ function sendTrain(platformPriority)
   if platforms[platformPriority].trainPresent == true then 
     send:enqueue(platformPriority)
 
-    if send:size() == 1 then 
-      while send:size() ~=0 do 
-        local pf = send:front()
-
-        common.sendMessage("sendTrain", pf)
-
-        --todo finish
-
-      end -- while
-    end -- if size
+    if holdTrains == false then -- send next train only if it is safe
+      sendNextTrain()
+    end --if 
   end --if
 
 end -- send train
 
 --work through the queue 
 function sendNextTrain()
+  holdTrains=false -- reset locker
+  if send:size() >0 then
+    local pf = send:dequeue() -- pop from queue
 
-
+    --send train
+    common.sendMessage("sendTrain", pf)
+    holdTrains = true
+  end --if
 end --sendNextTrain
 
 
@@ -161,12 +162,32 @@ function listenForMessages()
   end -- while
 end -- function
 
+function listenForRedstone() 
+
+  while true do
+    os.pullEvent("redstone") -- wait for a "redstone" event
+
+    --TEST LINE CLEAR 
+    local oldLineClearPulse = lineClearPulse
+    lineClearPulse = redstone.testBundledInput(settings.cableSide, settings.redstone.lineClear)
+    if lineClearPulse == true and lineClearPulse ~= oldLineClearPulse then --if pulse is on 
+      --line clear 
+      sendNextTrain()
+
+    end -- if line clear 
+
+
+
+
+  end -- while 
+end -- function listenForRedstone
+
 
 function main()
   monitor.clear()
   buttons = screen.buildButtons()
   common.sendMessage("reconnect", nil) -- notify all child computers to reconnect
-  parallel.waitForAll(listenForClick, listenForMessages)
+  parallel.waitForAll(listenForClick, listenForMessages, listenForRedstone)
 end -- function
 
 --start program
