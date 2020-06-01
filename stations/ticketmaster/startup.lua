@@ -98,13 +98,16 @@ function sendTrain(platformPriority)
 
   --check if a train is actually present
   if platforms[platformPriority].trainPresent == true then 
+    
     send:enqueue(platformPriority)
+    print("Waiting to send train at platform " .. platformPriority)
     platforms[platformPriority].sent = true
-    return true
+    
     if holdTrains == false then -- send next train only if it is safe
       sendNextTrain()
       
     end --if 
+    return true
   end --if
   return false
 end -- send train
@@ -116,6 +119,7 @@ function sendNextTrain()
     local pf = send:dequeue() -- pop from queue
     platforms[pf].sent = false
     --send train
+    print("Sending train on platform  " .. pf)
     common.sendMessage("sendTrain", pf)
     holdTrains = true
   end --if
