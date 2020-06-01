@@ -140,7 +140,7 @@ function listenForMessages()
         if message.directive == "train_status" then 
           
           platforms[message.payload.priority].trainReady = message.payload.trainReady;
-          if message.payload.trainready == true then 
+          if message.payload.trainready == true and message.payload.destination ~=nil then 
             sendTrain(message.payload.priority);
           end --if 
 

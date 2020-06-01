@@ -104,7 +104,7 @@ function sendTrainStatus()
   if trainPresent == false then 
     destination = nil -- reset to nil
   end -- if
-  local message = {priority=settings.priority, trainPresent=trainPresent, trainReady=trainReady destination=destination}
+  local message = {priority=settings.priority, trainPresent=trainPresent, trainReady=trainReady, destination=destination}
   common.sendMessage("train_status", message)
 
 end -- function setTrainStatus
