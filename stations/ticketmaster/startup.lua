@@ -173,7 +173,7 @@ function listenForMessages()
 
         if message.directive == "train_ready" then 
 
-          sendTrain(message.payload.priority);
+          sendTrain(message.payload);
 
         end -- if train ready 
       end -- if (computer type)

@@ -20,7 +20,6 @@ station.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUT
 station.routes["Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn};
 station.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance}
 
-station.autogo = false -- will not wait for 'trainReady' to pulse from the loading platform 
 
 station.buttonColor = colors.blue
 station.buttonClickColor = colors.red

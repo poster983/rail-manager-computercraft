@@ -67,6 +67,8 @@ function handleMessages(event)
           destination = message.payload.destination
           if printTickets(message.payload.destination) == false then 
             common.sendMessage("error", {priority=settings.priority, message="Could not print tickets"})
+          elseif settings.autogo == true then 
+            common.sendMessage("train_ready", settings.priority)
           end -- if 
         end -- directive reconnect
 
@@ -116,8 +118,7 @@ end -- fucntion
 function sendTrainReady(tr) 
   
   if tr == true and trainReady ~= tr then 
-    local message = {priority=settings.priority}
-    common.sendMessage("train_ready", message)
+    common.sendMessage("train_ready", settings.priority)
   end -- if train ready
   trainReady = tr
 end 
