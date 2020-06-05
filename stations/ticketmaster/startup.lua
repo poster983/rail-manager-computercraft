@@ -114,9 +114,11 @@ end -- send train
 
 --work through the queue 
 function sendNextTrain()
+  
   holdTrains=false -- reset locker
   if send:size() >0 then
     local pf = send:dequeue() -- pop from queue
+    
     platforms[pf].sent = false
     --send train
     print("Sending train on platform  " .. pf)
@@ -145,16 +147,16 @@ function listenForMessages()
 
       if message.computerType == "loading_platform" then -- Loading platform!
         if message.directive == "connect_parent" then 
-          platforms[message.payload.priority] = {name=message.payload.platformName, trainReady=message.payload.trainReady,  destination=nil, trainPresent=message.payload.trainPresent} --save device data
+          platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
           
           common.sendMessage(message.payload.priority..":connect", settings.routes) -- send routes to loading platforms 
         end -- if (directive connect)
         if message.directive == "train_status" then 
           
-          platforms[message.payload.priority].trainReady = message.payload.trainReady;
+          --[[platforms[message.payload.priority].trainReady = message.payload.trainReady;
           if message.payload.trainReady == true and message.payload.destination ~=nil then 
             sendTrain(message.payload.priority);
-          end --if 
+          end --if ]]
 
           --ruun next job only if trainPresent has changed
           if message.payload.trainPresent ~= platforms[message.payload.priority].trainPresent then
@@ -168,6 +170,12 @@ function listenForMessages()
 
           end -- if
         end -- if directive train_status
+
+        if message.directive == "train_ready" then 
+
+          sendTrain(message.payload.priority);
+
+        end -- if train ready 
       end -- if (computer type)
 
     end -- if
@@ -182,7 +190,8 @@ function listenForRedstone()
     --TEST LINE CLEAR 
     local oldLineClearPulse = lineClearPulse
     lineClearPulse = redstone.testBundledInput(settings.cableSide, settings.redstone.lineClear)
-    if lineClearPulse == true and lineClearPulse ~= oldLineClearPulse then --if pulse is on 
+    print("Redstone event: lineClearPulse" )
+    if lineClearPulse == false and lineClearPulse ~= oldLineClearPulse then --if pulse is on 
       --line clear 
       sendNextTrain()
 

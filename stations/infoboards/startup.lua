@@ -134,10 +134,9 @@ function handleMessages(rawEvent)
                 
                 if message.directive == "train_status" then 
 
-                    if message.payload.trainPresent == false and platforms[message.payload.priority].destination ~=nil then --send departing message 
-                        alert("Stand Clear!", colors.orange, 1)
-                        alert("Platform "..platforms[message.payload.priority].name.." Departing!", colors.red, 2)
-                    end -- if
+                    --[[if message.payload.trainPresent == false and platforms[message.payload.priority].destination ~=nil then --send departing message 
+                        
+                    end -- if]]
                     if platforms[message.payload.priority].trainPresent == true and message.payload.trainPresent == false then -- wipe destination
                         platforms[message.payload.priority].destination = nil;
                     end -- if
@@ -160,6 +159,14 @@ function handleMessages(rawEvent)
                     end -- if 
                 
                 end -- if directive setDestination
+
+                if message.directive == "sendTrain" then -- do the stand clear message
+                    alert("Stand Clear!", colors.orange, 1)
+                    alert("Platform "..platforms[message.payload.priority].name.." Departing!", colors.red, 2)
+                    if alertQueue:size() == 0 then 
+                        buildDepartures()
+                    end -- if 
+                end -- if sendTrain 
 
             end -- if commputer type
 

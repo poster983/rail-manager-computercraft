@@ -89,7 +89,10 @@ end --listenForMessages
 function handleRedstoneEvent(event) 
 
   if event[1] == "redstone" then 
-    trainReady = redstone.testBundledInput(settings.cableSide, settings.redstone.trainReady)
+
+    
+    sendTrainReady(redstone.testBundledInput(settings.cableSide, settings.redstone.trainReady))
+    
     trainPresent = redstone.testBundledInput(settings.cableSide, settings.redstone.trainPresent)
     sendTrainStatus()
 
@@ -110,26 +113,33 @@ function listenForEvents()
   end -- while 
 end -- fucntion 
 
+function sendTrainReady(tr) 
+  local old = tr;
+  if tr == true and old ~= tr then 
+    local message = {priority=settings.priority}
+    common.sendMessage("train_ready", message)
+  end -- if train ready
+end 
 
 function sendTrainStatus() 
 
   if trainPresent == false then 
     destination = nil -- reset to nil
   end -- if
-  local message = {priority=settings.priority, trainPresent=trainPresent, trainReady=trainReady, destination=destination}
+  local message = {priority=settings.priority, trainPresent=trainPresent, destination=destination}
   common.sendMessage("train_status", message)
 
 end -- function setTrainStatus
 
 function connectToParent()
   print("Connecting to Parent")
-  local message = {platformName=settings.platformName, trainReady=trainReady,  priority=settings.priority, trainPresent=trainPresent}
+  local message = {platformName=settings.platformName,  priority=settings.priority, trainPresent=trainPresent}
   common.sendMessage("connect_parent", message)
 end --function 
 
 function connectToInfoboards()
   print("Connecting to Infoboards")
-  local message = {platformName=settings.platformName, trainReady=trainReady, priority=settings.priority, trainPresent=trainPresent}
+  local message = {platformName=settings.platformName, priority=settings.priority, trainPresent=trainPresent}
   common.sendMessage("connect_infoboards", message)
 end --function 
 
