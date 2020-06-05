@@ -114,11 +114,12 @@ function listenForEvents()
 end -- fucntion 
 
 function sendTrainReady(tr) 
-  local old = tr;
-  if tr == true and old ~= tr then 
+  
+  if tr == true and trainReady ~= tr then 
     local message = {priority=settings.priority}
     common.sendMessage("train_ready", message)
   end -- if train ready
+  trainReady = tr
 end 
 
 function sendTrainStatus() 

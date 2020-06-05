@@ -162,7 +162,7 @@ function handleMessages(rawEvent)
 
                 if message.directive == "sendTrain" then -- do the stand clear message
                     alert("Stand Clear!", colors.orange, 1)
-                    alert("Platform "..platforms[message.payload.priority].name.." Departing!", colors.red, 2)
+                    alert("Platform "..platforms[message.payload].name.." Departing!", colors.red, 2)
                     if alertQueue:size() == 0 then 
                         buildDepartures()
                     end -- if 
