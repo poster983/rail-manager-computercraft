@@ -124,6 +124,9 @@ function sendNextTrain()
     print("Sending train on platform  " .. pf)
     common.sendMessage("sendTrain", pf)
     holdTrains = true
+    redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainLeaving))
+    common.wait(0.5, handleEvents)
+    redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainLeaving))
   end --if
 end --sendNextTrain
 
@@ -184,11 +187,9 @@ function handleMessages(event)
         end -- end if error
 
         if message.directive == "train_ready" then 
-
+          
           sendTrain(message.payload);
-          redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainLeaving))
-          common.wait(0.5, handleEvents)
-          redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainLeaving))
+          
 
 
         end -- if train ready 
@@ -205,8 +206,9 @@ function handleRedstoneEvent(event)
     --TEST LINE CLEAR 
     local oldLineClearPulse = lineClearPulse
     lineClearPulse = redstone.testBundledInput(settings.cableSide, settings.redstone.lineClear)
-    print("Redstone event: lineClearPulse" )
+    
     if lineClearPulse == false and lineClearPulse ~= oldLineClearPulse then --if pulse is on 
+      print("Redstone event: lineClearPulse" )
       --line clear 
       sendNextTrain()
 

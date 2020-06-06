@@ -117,7 +117,7 @@ end -- fucntion
 
 function sendTrainReady(tr) 
   
-  if tr == true and trainReady ~= tr then 
+  if tr == true and trainReady ~= tr and trainPresent == true and destination ~=nil then 
     common.sendMessage("train_ready", settings.priority)
   end -- if train ready
   trainReady = tr
