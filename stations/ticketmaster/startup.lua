@@ -137,10 +137,10 @@ function listenForClick()
   end -- while
 end -- function 
 
-function listenForMessages()
-  while true do 
+function handleMessages(event) 
+  if event[1] == "modem_message" then 
     local event, modemSide, senderChannel, 
-    replyChannel, message, senderDistance = os.pullEvent("modem_message")
+                replyChannel, message, senderDistance = unpack(event)
 
     if message ~= nil and message.yardID == settings.yardID and message.stationID == settings.stationID then -- this is a message for us 
       print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
@@ -165,27 +165,42 @@ function listenForMessages()
             if message.payload.trainPresent == false then 
               --track no longer has destination
               platforms[message.payload.priority].destination = nil
+            else  -- train arrived!
+              redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainArriving))
+              common.wait(0.5, handleEvents)
+              redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainArriving))
             end -- if
             nextJob()
 
           end -- if
         end -- if directive train_status
 
+        if message.directive == "error" then 
+          redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.error))
+          common.wait(0.5, handleEvents)
+          redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.error))
+
+          print("Error from loading_platform " .. message.payload.priority .. ": " .. message.payload.message)
+        end -- end if error
+
         if message.directive == "train_ready" then 
 
           sendTrain(message.payload);
+          redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainLeaving))
+          common.wait(0.5, handleEvents)
+          redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainLeaving))
+
 
         end -- if train ready 
       end -- if (computer type)
 
     end -- if
-  end -- while
+  end -- if modem message 
 end -- function
 
-function listenForRedstone() 
+function handleRedstoneEvent(event) 
 
-  while true do
-    os.pullEvent("redstone") -- wait for a "redstone" event
+  if event[1] == "redstone" then
 
     --TEST LINE CLEAR 
     local oldLineClearPulse = lineClearPulse
@@ -200,15 +215,28 @@ function listenForRedstone()
 
 
 
-  end -- while 
+  end -- if 
 end -- function listenForRedstone
+
+--exists for the wait function
+function handleEvents(event) 
+  handleRedstoneEvent(event)
+  handleMessages(event)
+end 
+
+function listenForEvents() 
+  while true do 
+    local event = {os.pullEvent()}
+    handleEvents(event)
+  end -- while 
+end -- function
 
 
 function main()
   monitor.clear()
   buttons = screen.buildButtons()
   common.sendMessage("reconnect", nil) -- notify all child computers to reconnect
-  parallel.waitForAll(listenForClick, listenForMessages, listenForRedstone)
+  parallel.waitForAll(listenForClick, listenForEvents)
 end -- function
 
 --start program
