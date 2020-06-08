@@ -2,9 +2,7 @@
 local args = {...}
 local forse = false;
 function argErr() 
-  error("Usage: "..shell.getRunningProgram().." <computer type> [-f]
-  \n Valid computer types include: yardmaster, infoboard, ticketmaster, loadingplatform \n
-  Options: \n -f: forse.  This will overwrite any settings files or unchanging files")
+  error("Usage: "..shell.getRunningProgram().." <computer type> [-f] \n Valid computer types include: yardmaster, infoboard, ticketmaster, loadingplatform \n Options: \n -f: forse.  This will overwrite any settings files or unchanging files")
 end -- function 
 
 if #args ~= 1 and #args ~= 2 then
@@ -38,18 +36,37 @@ local files = {
     screen={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/ticketmaster/screen.lua", name="screen.lua"},
     button={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/ticketmaster/button", name="button"},
   },
+  loadingplatform={
+    settings={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/loadingplatform/settings.lua", name="settings.lua"},
+    startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/loadingplatform/startup.lua", name="startup.lua"},
+  },
+  infoboards={
+    settings={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/infoboards/settings.lua", name="settings.lua"},
+    startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/infoboards/startup.lua", name="startup.lua"},
+  },
 }
 
 local computerTypes = {
     ticketmaster={
-          {file=files.ticketmaster.startup},
-          {file=files.ticketmaster.settings, dontUpdate=true},
-          {file=files.ticketmaster.screen},
-          {file=files.ticketmaster.button, dontUpdate=true},
-          {file=files.globals.queue},
-          {file=files.globals.common},
-          {file=files.globals.junctions, dontUpdate=true},
-    }
+      {file=files.ticketmaster.startup},
+      {file=files.ticketmaster.settings, dontUpdate=true},
+      {file=files.ticketmaster.screen},
+      {file=files.ticketmaster.button, dontUpdate=true},
+      {file=files.globals.queue, dontUpdate=true},
+      {file=files.globals.common},
+      {file=files.globals.junctions, dontUpdate=true},
+    },
+    loadingplatform={
+      {file=files.loadingplatform.startup},
+      {file=files.loadingplatform.settings, dontUpdate=true},
+      {file=files.globals.common},
+    },
+    infoboards={
+      {file=files.infoboards.startup},
+      {file=files.infoboards.settings, dontUpdate=true},
+      {file=files.globals.common},
+      {file=files.globals.queue, dontUpdate=true},
+    },
 }
 
 if computerTypes[args[1]] == nil then -- error with computertype
