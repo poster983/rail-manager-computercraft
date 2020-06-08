@@ -19,6 +19,8 @@ station.routes["Village"] = {junctions.villageEntrance};
 station.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
 station.routes["Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn};
 station.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance}
+station.routes["Castle"] = {junctions.yardNorthboundUTurn}
+station.routes["Power Plant"] = {junctions.yardNorthboundUTurn}
 
 
 station.buttonColor = colors.blue

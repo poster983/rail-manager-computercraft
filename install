@@ -29,6 +29,7 @@ local files = {
     queue={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/Queue.lua", name="Queue.lua"},
     common={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/common.lua", name="common.lua"},
     junctions={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/junctions.lua", name="junctions.lua"},
+    brain={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/brain.lua", name="brain.lua"},
   },
   ticketmaster={
     startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/ticketmaster/startup.lua", name="startup.lua"},
@@ -40,7 +41,7 @@ local files = {
     settings={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/loadingplatform/settings.lua", name="settings.lua"},
     startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/loadingplatform/startup.lua", name="startup.lua"},
   },
-  infoboards={
+  infoboard={
     settings={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/infoboards/settings.lua", name="settings.lua"},
     startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/infoboards/startup.lua", name="startup.lua"},
   },
@@ -55,15 +56,16 @@ local computerTypes = {
       {file=files.globals.queue, dontUpdate=true},
       {file=files.globals.common},
       {file=files.globals.junctions, dontUpdate=true},
+      {file=files.globals.brain},
     },
     loadingplatform={
       {file=files.loadingplatform.startup},
       {file=files.loadingplatform.settings, dontUpdate=true},
       {file=files.globals.common},
     },
-    infoboards={
-      {file=files.infoboards.startup},
-      {file=files.infoboards.settings, dontUpdate=true},
+    infoboard={
+      {file=files.infoboard.startup},
+      {file=files.infoboard.settings, dontUpdate=true},
       {file=files.globals.common},
       {file=files.globals.queue, dontUpdate=true},
     },
@@ -77,9 +79,12 @@ end --if
 
 for i,v in ipairs(computerTypes[args[1]]) do
     if fs.exists(v.file.name) and v.dontUpdate==true and forse==false then 
-      print("Skipping file: ".. v.file.name .." exists already.  Use the -f option to download")
+      print("Skipping. File: ".. v.file.name .." exists already.  Use the -f option to download")
     else 
       download(v.file.url, v.file.name);
+      print("Downloaded: \""..v.file.name .."\"")
     end-- if
 end
+
+print("Done.  Reboot to run")
 

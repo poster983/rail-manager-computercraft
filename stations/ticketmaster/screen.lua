@@ -8,6 +8,7 @@ local screen = {}
 
 
 local monitor = peripheral.wrap( settings.screenSide )
+monitor.setTextScale(0.9)
 button.setMonitor(monitor)
 --get screen size
 local w, h = monitor.getSize()
@@ -74,6 +75,7 @@ screen.printJobCount = function(count)
         monitor.write(count .. " Trains incoming")
     end 
 end --printJobCount
+
 
 
 
