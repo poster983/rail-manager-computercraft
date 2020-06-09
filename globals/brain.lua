@@ -144,6 +144,7 @@ end --sendNextTrain
 
  
 brain.clearPlatform = function() 
+  print("Clearing the platform!")
   -- find the total number of trains 
   local platformCount = table.getn(brain.platforms);
   local numOfTrains = 0
@@ -162,8 +163,9 @@ brain.clearPlatform = function()
   if numOfTrains == platformCount and trainLeaving == false then -- trya nd clear the line f all lines are full
 
     for i,pf in ipairs(brain.platforms) do
-      if pf.destination == false and pf.trainPresent == true then --only send if the train isnt doing anything
+      if pf.destination == nil then --only send if the train isnt doing anything
           setDestination(i, brain.closestYard)
+          common.wait(0.5, brain.handleEvents)
           sendTrain(i, {cut=true})
           return;
 
@@ -171,7 +173,9 @@ brain.clearPlatform = function()
 
     end --for
     --fallback just send the last train
+    print("Falling back to last train")
     setDestination(numOfTrains, brain.closestYard)
+    common.wait(0.5, brain.handleEvents)
     sendTrain(numOfTrains, {cut=true})
   end --if
 
@@ -257,7 +261,7 @@ function handleRedstoneEvent(event)
     local oldClearPlatformPulse = clearPlatformPulse
     clearPlatformPulse = redstone.testBundledInput(settings.cableSide, settings.redstone.clearPlatform)
     
-    if clearPlatformPulse == false and clearPlatformPulse ~= oldClearPlatformPulse then --if pulse is on 
+    if clearPlatformPulse == true and clearPlatformPulse ~= oldClearPlatformPulse then --if pulse is on 
       print("Redstone event: clearPlatformPulse" )
       --line clear 
       brain.clearPlatform()
