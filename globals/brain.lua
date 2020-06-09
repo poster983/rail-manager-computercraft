@@ -149,10 +149,10 @@ brain.clearPlatform = function()
   local numOfTrains = 0
   local numOfUsedTrains = 0
   for i,pf in ipairs(brain.platforms) do
-    if brain.platforms[pf].trainPresent ==true then 
+    if pf.trainPresent ==true then 
       numOfTrains = numOfTrains+1
     end -- if 
-    if brain.platforms[pf].destination == true then
+    if pf.destination == true then
       numOfUsedTrains = numOfUsedTrains+1
     end -- if
   end -- for
@@ -162,9 +162,9 @@ brain.clearPlatform = function()
   if numOfTrains == platformCount and trainLeaving == false then -- trya nd clear the line f all lines are full
 
     for i,pf in ipairs(brain.platforms) do
-      if brain.platforms[pf].destination == false and brain.platforms[pf].trainPresent == true then --only send if the train isnt doing anything
-          setDestination(pf, brain.closestYard)
-          sendTrain(pf, {cut=true})
+      if pf.destination == false and pf.trainPresent == true then --only send if the train isnt doing anything
+          setDestination(i, brain.closestYard)
+          sendTrain(i, {cut=true})
           return;
 
       end -- if 
