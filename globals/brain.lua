@@ -19,7 +19,7 @@ brain.closestYard = "Big Yard"
 local trainLeaving = false; 
 
 local lineClearPulse = false;
-local clearLinePulse = false;
+local clearPlatformPulse = false;
 
 local modem = peripheral.wrap( settings.modemSide )
 modem.open(settings.modemChannel)
@@ -126,11 +126,9 @@ function sendTrain(platformPriority, opts)
 end -- send train
 
 --work through the queue 
---opts:
 function sendNextTrain()
   trainLeaving=false -- reset locker
   if brain.send:size() >0 then
-    if opts.
     local pf = brain.send:dequeue() -- pop from queue
     
     brain.platforms[pf].sent = false
@@ -145,7 +143,7 @@ function sendNextTrain()
 end --sendNextTrain
 
  
-brain.clearLine = function() 
+brain.clearPlatform = function() 
   -- find the total number of trains 
   local platformCount = table.getn(brain.platforms);
   local numOfTrains = 0
@@ -256,13 +254,13 @@ function handleRedstoneEvent(event)
     
 
     --TEST Make room pulse  
-    local oldClearLinePulse = clearLinePulse
-    clearLinePulse = redstone.testBundledInput(settings.cableSide, settings.redstone.lineClear)
+    local oldClearPlatformPulse = clearPlatformPulse
+    clearPlatformPulse = redstone.testBundledInput(settings.cableSide, settings.redstone.clearPlatform)
     
-    if clearLinePulse == false and clearLinePulse ~= oldClearLinePulse then --if pulse is on 
-      print("Redstone event: clearLinePulse" )
+    if clearPlatformPulse == false and clearPlatformPulse ~= oldClearPlatformPulse then --if pulse is on 
+      print("Redstone event: clearPlatformPulse" )
       --line clear 
-      brain.clearLine()
+      brain.clearPlatform()
 
     end -- if line clear 
 

@@ -29,7 +29,7 @@ end--handle screen event
 
 
 function handleEvents(event) 
-  
+  handleScreenEvent(event)
   brain.handleEvents(event)
 
 end -- handle events 

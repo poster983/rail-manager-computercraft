@@ -29,7 +29,7 @@ station.buttonClickColor = colors.red
 station.redstone = {
     --input
     lineClear=colors.blue, -- pulse from detector rail. lets the computer know that it is safe to send the next train
-    clearLine=colors.yellow  -- will clear a train from the station if full.  used when a train is arriving
+    clearPlatform=colors.yellow,  -- will clear a train from the station if full.  used when a train is arriving
 
     --output
     error=colors.red, -- pulses when an error occurs in the station.  Like a printer is out of paper or ink
