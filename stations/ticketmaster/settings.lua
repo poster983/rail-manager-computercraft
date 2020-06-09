@@ -17,7 +17,7 @@ station.routes = {}
 station.routes["Doof"] = {junctions.villageEntrance, junctions.doofEntrance};
 station.routes["Village"] = {junctions.villageEntrance};
 station.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
-station.routes["Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn};
+station.routes["Big Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn, yard=true};
 station.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance}
 station.routes["Castle"] = {junctions.yardNorthboundUTurn}
 station.routes["Power Plant"] = {junctions.yardNorthboundUTurn}
@@ -29,6 +29,7 @@ station.buttonClickColor = colors.red
 station.redstone = {
     --input
     lineClear=colors.blue, -- pulse from detector rail. lets the computer know that it is safe to send the next train
+    clearLine=colors.yellow  -- will clear a train from the station if full.  used when a train is arriving
 
     --output
     error=colors.red, -- pulses when an error occurs in the station.  Like a printer is out of paper or ink

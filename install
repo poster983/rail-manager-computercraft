@@ -53,7 +53,7 @@ local computerTypes = {
       {file=files.ticketmaster.settings, dontUpdate=true},
       {file=files.ticketmaster.screen},
       {file=files.ticketmaster.button, dontUpdate=true},
-      {file=files.globals.queue, dontUpdate=true},
+      {file=files.globals.queue},
       {file=files.globals.common},
       {file=files.globals.junctions, dontUpdate=true},
       {file=files.globals.brain},
@@ -67,7 +67,7 @@ local computerTypes = {
       {file=files.infoboard.startup},
       {file=files.infoboard.settings, dontUpdate=true},
       {file=files.globals.common},
-      {file=files.globals.queue, dontUpdate=true},
+      {file=files.globals.queue},
     },
 }
 

@@ -13,9 +13,13 @@ brain.jobs = Queue:new(); --create new job queue
 brain.summoned = Queue:new(); -- create a new queue for jobs that had trains summoned for them
 
 brain.send = Queue:new();
-local holdTrains = false; 
+
+brain.closestYard = "Big Yard"
+
+local trainLeaving = false; 
 
 local lineClearPulse = false;
+local clearLinePulse = false;
 
 local modem = peripheral.wrap( settings.modemSide )
 modem.open(settings.modemChannel)
@@ -91,7 +95,11 @@ function setDestination(priority, destination)
 end -- setDestination
 
 --ADD TO TRAIN SEND QUEUE
-function sendTrain(platformPriority) 
+--opts: {cut: Bool - cuts to front of queue}
+function sendTrain(platformPriority, opts) 
+  if opts == nil then 
+    opts = {}
+  end -- default
   --check if platform is already in the queue
   if brain.platforms[platformPriority].sent == true then 
     return false
@@ -100,11 +108,15 @@ function sendTrain(platformPriority)
   --check if a train is actually present
   if brain.platforms[platformPriority].trainPresent == true then 
     
-    brain.send:enqueue(platformPriority)
+    if opts.cut == true then 
+      brain.send:cut(platformPriority)
+    else
+      brain.send:enqueue(platformPriority)
+    end -- if
     print("Waiting to send train at platform " .. platformPriority)
     brain.platforms[platformPriority].sent = true
     
-    if holdTrains == false then -- send next train only if it is safe
+    if trainLeaving == false then -- send next train only if it is safe
       sendNextTrain()
       
     end --if 
@@ -114,32 +126,59 @@ function sendTrain(platformPriority)
 end -- send train
 
 --work through the queue 
+--opts:
 function sendNextTrain()
-  
-  holdTrains=false -- reset locker
+  trainLeaving=false -- reset locker
   if brain.send:size() >0 then
+    if opts.
     local pf = brain.send:dequeue() -- pop from queue
     
     brain.platforms[pf].sent = false
     --send train
     print("Sending train on platform  " .. pf)
     common.sendMessage("sendTrain", pf)
-    holdTrains = true
+    trainLeaving = true
     redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainLeaving))
     common.wait(0.5, brain.handleEvents)
     redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainLeaving))
   end --if
 end --sendNextTrain
 
-
---[[function listenForClick() 
-  while true do 
-    local event = button.await(buttons)
-    if event ~= nil and event.type == "destination" then 
-      newDestination(event.value)
+ 
+brain.clearLine = function() 
+  -- find the total number of trains 
+  local platformCount = table.getn(brain.platforms);
+  local numOfTrains = 0
+  local numOfUsedTrains = 0
+  for i,pf in ipairs(brain.platforms) do
+    if brain.platforms[pf].trainPresent ==true then 
+      numOfTrains = numOfTrains+1
     end -- if 
-  end -- while
-end -- function ]]
+    if brain.platforms[pf].destination == true then
+      numOfUsedTrains = numOfUsedTrains+1
+    end -- if
+  end -- for
+
+  
+
+  if numOfTrains == platformCount and trainLeaving == false then -- trya nd clear the line f all lines are full
+
+    for i,pf in ipairs(brain.platforms) do
+      if brain.platforms[pf].destination == false and brain.platforms[pf].trainPresent == true then --only send if the train isnt doing anything
+          setDestination(pf, brain.closestYard)
+          sendTrain(pf, {cut=true})
+          return;
+
+      end -- if 
+
+    end --for
+    --fallback just send the last train
+    setDestination(numOfTrains, brain.closestYard)
+    sendTrain(numOfTrains, {cut=true})
+  end --if
+
+end -- clear line 
+
 
 function handleMessages(event) 
   if event[1] == "modem_message" then 
@@ -214,6 +253,18 @@ function handleRedstoneEvent(event)
       sendNextTrain()
 
     end -- if line clear 
+    
+
+    --TEST Make room pulse  
+    local oldClearLinePulse = clearLinePulse
+    clearLinePulse = redstone.testBundledInput(settings.cableSide, settings.redstone.lineClear)
+    
+    if clearLinePulse == false and clearLinePulse ~= oldClearLinePulse then --if pulse is on 
+      print("Redstone event: clearLinePulse" )
+      --line clear 
+      brain.clearLine()
+
+    end -- if line clear 
 
 
 
@@ -227,7 +278,7 @@ brain.handleEvents = function(event)
   handleMessages(event)
 end 
 
-brain.listenForEvents function() 
+brain.listenForEvents = function() 
   while true do 
     local event = {os.pullEvent()}
     brain.handleEvents(event)
@@ -238,6 +289,6 @@ end -- function
 brain.main = function()
   
   common.sendMessage("reconnect", nil) -- notify all child computers to reconnect
-  brain.listenForEvents()
 end -- function
 
+return brain
