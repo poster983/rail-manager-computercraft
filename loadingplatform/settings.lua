@@ -10,7 +10,7 @@ settings.modemSide = "top"
 settings.modemChannel = 1 
 
 settings.stationID = "base" -- should match the networkid in ticketmaster
-settings.yardID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the yardid this station is connected to 
+settings.networkID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the yardid this station is connected to 
 
 settings.autogo = false -- will not wait for 'trainReady' to pulse 
 

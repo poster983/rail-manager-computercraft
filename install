@@ -45,6 +45,10 @@ local files = {
     settings={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/infoboards/settings.lua", name="settings.lua"},
     startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/infoboards/startup.lua", name="startup.lua"},
   },
+  yardmaster={
+    settings={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/yard/settings.lua", name="settings.lua"},
+    startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/yard/startup.lua", name="startup.lua"},
+  },
 }
 
 local computerTypes = {
@@ -69,6 +73,14 @@ local computerTypes = {
       {file=files.globals.common},
       {file=files.globals.queue},
     },
+    yardmaster={
+      {file=files.yardmaster.startup},
+      {file=files.yardmaster.settings, dontUpdate=true},
+      {file=files.globals.queue},
+      {file=files.globals.common},
+      {file=files.globals.junctions, dontUpdate=true},
+      {file=files.globals.brain},
+    }
 }
 
 if computerTypes[args[1]] == nil then -- error with computertype

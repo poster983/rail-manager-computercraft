@@ -50,7 +50,7 @@ function handleMessages(event)
     local event, modemSide, senderChannel, 
                 replyChannel, message, senderDistance = unpack(event)
 
-    if message ~= nil and message.yardID == settings.yardID and message.stationID == settings.stationID then -- this is a message for us 
+    if message ~= nil and message.networkID == settings.networkID and message.stationID == settings.stationID then -- this is a message for us 
       print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
 
       if message.computerType == "ticketmaster" then -- Message from ticket master!

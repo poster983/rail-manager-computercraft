@@ -121,7 +121,7 @@ function handleMessages(rawEvent)
     if rawEvent[1] == "modem_message" then -- only run if modem message 
         local event, modemSide, senderChannel, 
                 replyChannel, message, senderDistance = unpack(rawEvent)
-        if message ~= nil and message.yardID == settings.yardID and message.stationID == settings.stationID then
+        if message ~= nil and message.networkID == settings.networkID and message.stationID == settings.stationID then
             print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
             if message.computerType == "loading_platform" then
 

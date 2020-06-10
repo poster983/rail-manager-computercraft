@@ -1,32 +1,32 @@
 junctions = require("./junctions")
 -- Station Config
-local station = {}
-station.computerType = "ticketmaster" --Do Not Change
+local settings = {}
+settings.computerType = "ticketmaster" --Do Not Change
 
 --Station Settings (Change for Each Station) 
 --Sould match the route names for every other station
-station.stationID = "base" --should match the routes on other configs
-station.yardID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the yard network this is connected to 
+settings.stationID = "base" --should match the routes on other configs
+settings.networkID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the yard network this is connected to 
 
-station.screenSide = "top"
-station.modemSide = "right"
-station.cableSide = "back" -- redstone cable
-station.modemChannel = 1 
+settings.screenSide = "top"
+settings.modemSide = "right"
+settings.cableSide = "back" -- redstone cable
+settings.modemChannel = 1 
 -- Route Table (Chnage for each station)
-station.routes = {}
-station.routes["Doof"] = {junctions.villageEntrance, junctions.doofEntrance};
-station.routes["Village"] = {junctions.villageEntrance};
-station.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
-station.routes["Big Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn, yard=true};
-station.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance}
-station.routes["Castle"] = {junctions.yardNorthboundUTurn}
-station.routes["Power Plant"] = {junctions.yardNorthboundUTurn}
+settings.routes = {}
+settings.routes["Doof"] = {junctions.villageEntrance, junctions.doofEntrance};
+settings.routes["Village"] = {junctions.villageEntrance};
+settings.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
+settings.routes["Big Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn, yard=true};
+settings.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance}
+settings.routes["Castle"] = {junctions.yardNorthboundUTurn}
+settings.routes["Power Plant"] = {junctions.yardNorthboundUTurn}
 
 
-station.buttonColor = colors.blue
-station.buttonClickColor = colors.red
+settings.buttonColor = colors.blue
+settings.buttonClickColor = colors.red
 
-station.redstone = {
+settings.redstone = {
     --input
     lineClear=colors.blue, -- pulse from detector rail. lets the computer know that it is safe to send the next train
     clearPlatform=colors.yellow,  -- will clear a train from the station if full.  used when a train is arriving
@@ -37,4 +37,4 @@ station.redstone = {
     trainArriving=colors.black, -- pulses when a train arrives at the station
 }
 
-return station;
+return settings;

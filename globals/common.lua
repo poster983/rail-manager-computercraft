@@ -13,7 +13,7 @@ common.getTableKeys = function(tab)
 common.sendMessage = function(directive, payload) 
   local message = {}
 
-  message.yardID = settings.yardID
+  message.networkID = settings.networkID
   message.stationID = settings.stationID
   message.computerType = settings.computerType
   message.directive = directive
