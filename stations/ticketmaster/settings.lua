@@ -17,7 +17,7 @@ settings.routes = {}
 settings.routes["Doof"] = {junctions.villageEntrance, junctions.doofEntrance};
 settings.routes["Village"] = {junctions.villageEntrance};
 settings.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
-settings.routes["Big Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn, yard=true};
+settings.routes["Main Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn, yard=true};
 settings.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance}
 settings.routes["Castle"] = {junctions.yardNorthboundUTurn}
 settings.routes["Power Plant"] = {junctions.yardNorthboundUTurn}

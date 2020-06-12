@@ -10,7 +10,7 @@ common.getTableKeys = function(tab)
   end
 
 
-common.sendMessage = function(directive, payload) 
+common.sendMessage = function(directive, payload, to) 
   local message = {}
 
   message.networkID = settings.networkID
@@ -18,6 +18,7 @@ common.sendMessage = function(directive, payload)
   message.computerType = settings.computerType
   message.directive = directive
   message.payload = payload
+  message.to = to
 
   peripheral.wrap(settings.modemSide).transmit(settings.modemChannel, settings.modemChannel, message)
 end --function

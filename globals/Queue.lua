@@ -98,14 +98,14 @@ function Queue:iterator()
     return nil;
   end -- if
   return self._front;
-end --frony
+end --iterator
 
 function Queue:front() 
   if self._front == nil then 
     return nil;
   end -- if
   return self._front.data;
-end --frony
+end --front
 
 function Queue:back() 
   if self._back == nil then 

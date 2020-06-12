@@ -20,6 +20,9 @@ local station = {} --load from network
 function printTickets(destination)
   --create new page
   local route = station.routes[destination]
+  if route == nil then 
+    return false
+  end -- if
   for i,junction in ipairs(route) do
     if not printString(junction) then
       return false

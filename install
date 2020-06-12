@@ -30,6 +30,7 @@ local files = {
     common={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/common.lua", name="common.lua"},
     junctions={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/junctions.lua", name="junctions.lua"},
     brain={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/brain.lua", name="brain.lua"},
+    yard={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/Yard.lua", name="Yard.lua"},
   },
   ticketmaster={
     startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/ticketmaster/startup.lua", name="startup.lua"},
@@ -61,6 +62,7 @@ local computerTypes = {
       {file=files.globals.common},
       {file=files.globals.junctions, dontUpdate=true},
       {file=files.globals.brain},
+      {file=files.globals.yard},
     },
     loadingplatform={
       {file=files.loadingplatform.startup},
@@ -80,6 +82,7 @@ local computerTypes = {
       {file=files.globals.common},
       {file=files.globals.junctions, dontUpdate=true},
       {file=files.globals.brain},
+      {file=files.globals.yards},
     }
 }
 

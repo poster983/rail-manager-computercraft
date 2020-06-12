@@ -5,6 +5,7 @@ local settings = require("./settings")
 local common = require("./common")
 --local screen = require("./screen")
 local Queue = require("./Queue")
+local Yard = require("./Yard")
 
 
 
@@ -14,7 +15,9 @@ brain.summoned = Queue:new(); -- create a new queue for jobs that had trains sum
 
 brain.send = Queue:new();
 
-brain.closestYard = "Big Yard"
+brain.yard = Yard:new()
+
+brain.closestYard = "Main Yard"
 
 local trainLeaving = false; 
 
@@ -24,7 +27,34 @@ local clearPlatformPulse = false;
 local modem = peripheral.wrap( settings.modemSide )
 modem.open(settings.modemChannel)
 
+--returns data about the current state of the platforms
+brain.platformStatus = function() 
+  local response = {} 
 
+  response.total = table.getn(brain.platforms);
+
+  --calculate current train status
+  local numOfTrains = 0
+  local numOfUsedTrains = 0
+  for i,pf in ipairs(brain.platforms) do
+    if pf.trainPresent ==true then 
+      numOfTrains = numOfTrains+1
+    end -- if 
+    if pf.destination == true then
+      numOfUsedTrains = numOfUsedTrains+1
+    end -- if
+  end -- for
+  response.filled = numOfTrains
+  response.available = numOfTrains - numOfUsedTrains
+
+
+  return response
+
+end -- function 
+
+
+--[[DESTINATION FUNCTIONS]]
+---------------------------
 --checks the queue and sees if any trains are avalable
 function nextJob()
   if brain.jobs:size() == 0 and brain.summoned:size() == 0 then --check if queue is empty 
@@ -94,6 +124,8 @@ function setDestination(priority, destination)
 
 end -- setDestination
 
+--[[SEND TRAIN FUNCTIONS]]
+--------------------------
 --ADD TO TRAIN SEND QUEUE
 --opts: {cut: Bool - cuts to front of queue}
 function sendTrain(platformPriority, opts) 
@@ -142,7 +174,7 @@ function sendNextTrain()
   end --if
 end --sendNextTrain
 
- 
+
 brain.clearPlatform = function() 
   print("Clearing the platform!")
   -- find the total number of trains 
@@ -182,62 +214,93 @@ brain.clearPlatform = function()
 end -- clear line 
 
 
+--[[ YARD FUNCTIONS ]]
+----------------------
+
+
+
+--[[EVENT FUNCTIONS]]
+---------------------
 function handleMessages(event) 
   if event[1] == "modem_message" then 
     local event, modemSide, senderChannel, 
                 replyChannel, message, senderDistance = unpack(event)
 
-    if message ~= nil and message.networkID == settings.networkID and message.stationID == settings.stationID then -- this is a message for us 
-      print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
+    if message ~= nil and message.networkID == settings.networkID then --this is a valid message for out network
 
-      if message.computerType == "loading_platform" then -- Loading platform!
-        if message.directive == "connect_parent" then 
-          brain.platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
-          
-          common.sendMessage(message.payload.priority..":connect", settings.routes) -- send routes to loading platforms 
-        end -- if (directive connect)
-        if message.directive == "train_status" then 
-          
-          --[[platforms[message.payload.priority].trainReady = message.payload.trainReady;
-          if message.payload.trainReady == true and message.payload.destination ~=nil then 
-            sendTrain(message.payload.priority);
-          end --if ]]
+      if message.directive == "yard_status" and (message.to == settings.stationID or message.to == nil )then -- manage adding the yard to the yard object
+        print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
+        local obj = yard:get(message.stationID)
+        if obj ~=nil then -- object exists.  test to see if we need to replace
+          if obj.distance ~= senderDistance then --replace because the distance changed
+            print("Yard distance changed! Replacing!")
+            yard:remove(message.stationID)
+            yard:add(message.stationID, senderDistance, message.payload.platforms)
+          else
+            print("Updating existing yard!")
+            yard:update(message.stationID, message.payload.platforms)
+          end -- if 
+        else -- this is a new station we dont know about
+          print("Brand New Station Detected!")
+          yard:add(message.stationID, senderDistance, message.payload.platforms)
+        end --if
+        
+        
+      end -- if yard_status
 
-          --ruun next job only if trainPresent has changed
-          if message.payload.trainPresent ~= brain.platforms[message.payload.priority].trainPresent then
-            --set status value s
-            brain.platforms[message.payload.priority].trainPresent = message.payload.trainPresent;
-            if message.payload.trainPresent == false then 
-              --track no longer has destination
-              brain.platforms[message.payload.priority].destination = nil
-            else  -- train arrived!
-              redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainArriving))
-              common.wait(0.5, brain.handleEvents)
-              redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainArriving))
+
+      if message.stationID == settings.stationID then -- this is a message from inside the station
+        print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
+
+        if message.computerType == "loading_platform" then -- Loading platform!
+          if message.directive == "connect_parent" then 
+            brain.platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
+            
+            common.sendMessage(message.payload.priority..":connect", settings.routes) -- send routes to loading platforms 
+          end -- if (directive connect)
+          if message.directive == "train_status" then 
+            
+            --[[platforms[message.payload.priority].trainReady = message.payload.trainReady;
+            if message.payload.trainReady == true and message.payload.destination ~=nil then 
+              sendTrain(message.payload.priority);
+            end --if ]]
+
+            --ruun next job only if trainPresent has changed
+            if message.payload.trainPresent ~= brain.platforms[message.payload.priority].trainPresent then
+              --set status value s
+              brain.platforms[message.payload.priority].trainPresent = message.payload.trainPresent;
+              if message.payload.trainPresent == false then 
+                --track no longer has destination
+                brain.platforms[message.payload.priority].destination = nil
+              else  -- train arrived!
+                redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainArriving))
+                common.wait(0.5, brain.handleEvents)
+                redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainArriving))
+              end -- if
+              nextJob()
+
             end -- if
-            nextJob()
+          end -- if directive train_status
 
-          end -- if
-        end -- if directive train_status
+          if message.directive == "error" then 
+            redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.error))
+            common.wait(0.5, brain.handleEvents)
+            redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.error))
 
-        if message.directive == "error" then 
-          redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.error))
-          common.wait(0.5, brain.handleEvents)
-          redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.error))
+            print("Error from loading_platform " .. message.payload.priority .. ": " .. message.payload.message)
+          end -- end if error
 
-          print("Error from loading_platform " .. message.payload.priority .. ": " .. message.payload.message)
-        end -- end if error
-
-        if message.directive == "train_ready" then 
-          
-          sendTrain(message.payload);
-          
+          if message.directive == "train_ready" then 
+            
+            sendTrain(message.payload);
+            
 
 
-        end -- if train ready 
-      end -- if (computer type)
+          end -- if train ready 
+        end -- if (computer type)
 
-    end -- if
+      end -- if
+    end --if
   end -- if modem message 
 end -- function
 
