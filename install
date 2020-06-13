@@ -47,8 +47,8 @@ local files = {
     startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/infoboards/startup.lua", name="startup.lua"},
   },
   yardmaster={
-    settings={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/yard/settings.lua", name="settings.lua"},
-    startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/stations/yard/startup.lua", name="startup.lua"},
+    settings={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/yard/settings.lua", name="settings.lua"},
+    startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/yard/startup.lua", name="startup.lua"},
   },
 }
 
