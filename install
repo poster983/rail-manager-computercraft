@@ -82,7 +82,7 @@ local computerTypes = {
       {file=files.globals.common},
       {file=files.globals.junctions, dontUpdate=true},
       {file=files.globals.brain},
-      {file=files.globals.yards},
+      {file=files.globals.yard},
     }
 }
 
