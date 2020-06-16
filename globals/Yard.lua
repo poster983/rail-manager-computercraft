@@ -94,6 +94,7 @@ end -- update
 
 --returns the data object if the station exists nil if no station is found 
 function Yard:get(stationID)  
+    local curr = self._front
     while curr ~= nil do
         if curr.data.stationID == stationID then 
             return curr.data
@@ -127,6 +128,8 @@ function Yard:iterator()
     return self._front;
 end --iterator
 
-
+function Yard:size() 
+    return self._size;
+  end --size
 
 return Yard
