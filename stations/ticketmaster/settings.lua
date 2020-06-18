@@ -5,7 +5,7 @@ settings.computerType = "ticketmaster" --Do Not Change
 
 --Station Settings (Change for Each Station) 
 --Sould match the route names for every other station
-settings.stationID = "base" --should match the routes on other configs
+settings.stationID = "Base" --should match the routes on other configs
 settings.networkID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the yard network this is connected to 
 
 settings.screenSide = "top"
@@ -17,7 +17,7 @@ settings.routes = {}
 settings.routes["Doof"] = {junctions.villageEntrance, junctions.doofEntrance};
 settings.routes["Village"] = {junctions.villageEntrance};
 settings.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
-settings.routes["Main Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn, yard=true};
+settings.routes["Main Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn, hide=true};
 settings.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance}
 settings.routes["Castle"] = {junctions.yardNorthboundUTurn}
 settings.routes["Power Plant"] = {junctions.yardNorthboundUTurn}

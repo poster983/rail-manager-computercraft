@@ -53,5 +53,16 @@ common.printTable = function(o)
  end
 end
 
+
+common.pulse = function(color, eventPassthrough, time)
+  if time == nil then 
+    time = 0.5
+  end
+  redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), color))
+  common.wait(time, eventPassthrough)
+  redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), color))
+
+end --end pulse
+
   
 return common;

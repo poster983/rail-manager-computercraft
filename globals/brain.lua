@@ -17,7 +17,6 @@ brain.send = Queue:new();
 
 brain.yard = Yard:new()
 
-brain.closestYard = "Main Yard"
 
 local trainLeaving = false; 
 
@@ -92,7 +91,14 @@ function nextJob()
       --SEND CALL FOR TRAIN FROM HUB TODOOOO
       print("Call Train")
       brain.summoned:enqueue(brain.jobs:dequeue()) --move to brain.summoned queue
-      return
+      local closest = brain.yard:send()
+      if closest == nil then 
+        print("Error! No yards have trains avalable")
+        common.pulse(settings.redstone.error, brain.handleEvents)
+        return;
+      end -- if error
+      brain.requestRemote(closest)
+      return 
   end --if
 
   print("Will do nothing")
@@ -121,6 +127,8 @@ function setDestination(priority, destination)
   brain.platforms[priority].destination = destination
   local message = {priority=priority, destination=destination}
   common.sendMessage("setDestination", message)
+  os.queueEvent( "setDestination", message );
+
 
 end -- setDestination
 
@@ -196,7 +204,13 @@ brain.clearPlatform = function()
 
     for i,pf in ipairs(brain.platforms) do
       if pf.destination == nil then --only send if the train isnt doing anything
-          setDestination(i, brain.closestYard)
+          local closest = brain.yard:receive()
+          if closest == nil then 
+            print("Error! No yards avalable to recieve this train")
+            common.pulse(settings.redstone.error, brain.handleEvents)
+            return;
+          end -- if error
+          setDestination(i, closest)
           common.wait(0.5, brain.handleEvents)
           sendTrain(i, {cut=true})
           return;
@@ -206,12 +220,19 @@ brain.clearPlatform = function()
     end --for
     --fallback just send the last train
     print("Falling back to last train")
-    setDestination(numOfTrains, brain.closestYard)
+    --setDestination(numOfTrains, brain.closestYard)
     common.wait(0.5, brain.handleEvents)
     sendTrain(numOfTrains, {cut=true})
   end --if
 
 end -- clear line 
+
+
+brain.requestRemote = function(stationID)
+
+  common.sendMessage("request_train", settings.stationID, stationID)
+
+end --request remote
 
 
 --[[ YARD FUNCTIONS ]]
@@ -249,6 +270,10 @@ function handleMessages(event)
 
       end -- if yard_status
 
+      if message.directive == "request_train" and message.to == settings.stationID then --send trains to remote station
+        brain.newDestination(message.payload)
+      end --if
+
       --[[STATION PROTOCALLS]]
       ------------------------
       if message.stationID == settings.stationID then -- this is a message from inside the station
@@ -258,7 +283,8 @@ function handleMessages(event)
           if message.directive == "connect_parent" then 
             brain.platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
             
-            common.sendMessage(message.payload.priority..":connect", settings.routes) -- send routes to loading platforms 
+            local mess = {routes=settings.routes, type=settings.computerType}
+            common.sendMessage(message.payload.priority..":connect", mess) -- send routes to loading platforms 
           end -- if (directive connect)
           if message.directive == "train_status" then 
             

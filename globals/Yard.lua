@@ -104,8 +104,21 @@ function Yard:get(stationID)
     return nil
 end 
 
---returns the closest avalable stationID (closest yard). I.E, the avalable number of trains is > 0.  returns nil if there are no yards
-function Yard:closest()
+--if there is a spot avalable, then return the station ID, if not return nil
+function Yard:receive()
+    local curr = self._front
+    while curr ~= nil do
+        if curr.data.platforms.filled < curr.data.platforms.total then 
+            return curr.data.stationID
+        end -- if 
+
+        curr = curr.next
+    end -- while 
+    return nil
+end -- closest
+
+--returns the closest avalable stationID (closest yard) to send its trains. I.E, the avalable number of avalable trains is > 0.  returns nil if there are no yards
+function Yard:send()
     local curr = self._front
     while curr ~= nil do
         if curr.data.platforms.available > 0 then 

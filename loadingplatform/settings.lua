@@ -9,10 +9,10 @@ settings.cableSide = "back" -- redstone cable
 settings.modemSide = "top"
 settings.modemChannel = 1 
 
-settings.stationID = "base" -- should match the networkid in ticketmaster
+settings.stationID = "Base" -- should match the networkid in ticketmaster
 settings.networkID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the yardid this station is connected to 
 
-settings.autogo = false -- will not wait for 'trainReady' to pulse 
+settings.autogo = false -- will not wait for 'trainReady' to pulse.  will be set to true if connected to a yardmaster
 
 
 settings.redstone = {

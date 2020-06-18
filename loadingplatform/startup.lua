@@ -58,7 +58,8 @@ function handleMessages(event)
 
       if message.computerType == "ticketmaster" then -- Message from ticket master!
         if message.directive == settings.priority..":connect" then 
-          station.routes = message.payload -- save routes
+          station.routes = message.payload.routes -- save routes
+          station.type = message.payload.type
            
         end -- if (directive :connect)
 
@@ -70,7 +71,7 @@ function handleMessages(event)
           destination = message.payload.destination
           if printTickets(message.payload.destination) == false then 
             common.sendMessage("error", {priority=settings.priority, message="Could not print tickets"})
-          elseif settings.autogo == true then 
+          elseif settings.autogo == true or station.type == "yardmaster" then 
             common.sendMessage("train_ready", settings.priority)
           end -- if 
         end -- directive reconnect

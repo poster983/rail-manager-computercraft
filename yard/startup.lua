@@ -3,7 +3,14 @@ local common = require("./common")
 local brain = require("./brain")
 
 
+function restock()
+    local trainsRequested = 0;
+    local curr = brain.yard:iterator()
+    local platforms = brain.platformStatus()
+end --restock
+
 function sendYardStatus(to)
+    print("Sent Yard Status")
     local resp = {platforms=brain.platformStatus()}
     common.sendMessage("yard_status", resp, to)
 end --sendYardStatus
@@ -30,13 +37,19 @@ function handleNetworkEvents(event)
                     return;
                 end --if
 
-
-            end -- if
+            end -- if station directive
 
         end --if
     end --if
 
 end -- function
+
+function handleBrainEvent(event)
+    if event[1] == "setDestination" then --update yard status
+        sendYardStatus()
+        return;
+    end -- event jobcount
+end--function handleBrainEvent
 
 function handleEvents(event) 
     handleNetworkEvents(event)
