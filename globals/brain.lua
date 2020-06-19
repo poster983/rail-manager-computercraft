@@ -65,7 +65,7 @@ function nextJob()
   --check if any trains are avalable
   for i,pf in ipairs(brain.platforms) do
     if pf.trainPresent == true and pf.destination == nil then -- handle present trains and immediate departures 
-      print("Send Destination to computer ")
+      print("Send Destination to computer: "..i)
       --Send destination info to that platform
       local destination = nil
       if brain.summoned:size() > 0 then --dequeue from brain.summoned first
@@ -95,6 +95,7 @@ function nextJob()
       if closest == nil then 
         print("Error! No yards have trains avalable")
         common.pulse(settings.redstone.error, brain.handleEvents)
+        brain.summoned:dequeue()
         return;
       end -- if error
       brain.requestRemote(closest)
@@ -281,6 +282,7 @@ function handleMessages(event)
 
         if message.computerType == "loading_platform" then -- Loading platform!
           if message.directive == "connect_parent" then 
+            common.tprint(message)
             brain.platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
             
             local mess = {routes=settings.routes, type=settings.computerType}

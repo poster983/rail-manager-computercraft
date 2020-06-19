@@ -52,6 +52,7 @@ function handleBrainEvent(event)
 end--function handleBrainEvent
 
 function handleEvents(event) 
+    handleBrainEvent(event)
     handleNetworkEvents(event)
     brain.handleEvents(event)
   
