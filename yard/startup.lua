@@ -12,6 +12,7 @@ end --restock
 function sendYardStatus(to)
     print("Sent Yard Status")
     local resp = {platforms=brain.platformStatus()}
+    common.tprint(resp)
     common.sendMessage("yard_status", resp, to)
 end --sendYardStatus
 
@@ -46,15 +47,17 @@ end -- function
 
 function handleBrainEvent(event)
     if event[1] == "setDestination" then --update yard status
+
         sendYardStatus()
-        return;
     end -- event jobcount
 end--function handleBrainEvent
 
 function handleEvents(event) 
     handleBrainEvent(event)
-    handleNetworkEvents(event)
     brain.handleEvents(event)
+    --handleBrainEvent(event)
+    handleNetworkEvents(event)
+    
   
   end -- handle events 
   
@@ -62,6 +65,7 @@ function handleEvents(event)
   function catchEvents() 
     while true do 
       local event = {os.pullEvent()}
+      
       handleEvents(event)
   
     end --while 
@@ -70,10 +74,7 @@ function handleEvents(event)
   
   
   function main() 
-      brain.main()
-
-      sendYardStatus()
-      catchEvents()
+      parallel.waitForAll(catchEvents, brain.main, sendYardStatus)
   end -- main 
   
   main()

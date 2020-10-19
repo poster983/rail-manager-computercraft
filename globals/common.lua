@@ -66,12 +66,16 @@ end --end pulse
 
 
 common.tprint = function(tbl, indent)
+  if tbl == nil then 
+    print("NIL TABLE")
+    return 
+  end
   if not indent then indent = 0 end
   for k, v in pairs(tbl) do
     formatting = string.rep("  ", indent) .. k .. ": "
     if type(v) == "table" then
       print(formatting)
-      tprint(v, indent+1)
+      common.tprint(v, indent+1)
     elseif type(v) == 'boolean' then
       print(formatting .. tostring(v))      
     else

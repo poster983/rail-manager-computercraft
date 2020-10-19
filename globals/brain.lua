@@ -39,13 +39,13 @@ brain.platformStatus = function()
     if pf.trainPresent ==true then 
       numOfTrains = numOfTrains+1
     end -- if 
-    if pf.destination == true then
+    if pf.destination ~= nil then
       numOfUsedTrains = numOfUsedTrains+1
     end -- if
   end -- for
   response.filled = numOfTrains
   response.available = numOfTrains - numOfUsedTrains
-
+  
 
   return response
 
@@ -75,7 +75,7 @@ function nextJob()
       end --if else
       setDestination(i, destination);
       --platform number, destination
-      os.queueEvent( "set_destination", i, destination );
+      --os.queueEvent( "set_destination", i, destination );
       os.queueEvent( "job_count", brain.jobs:size() + brain.summoned:size() );
       --screen.printJobCount(brain.jobs:size() + brain.summoned:size()) -- update screen
       return;
@@ -92,10 +92,12 @@ function nextJob()
       print("Call Train")
       brain.summoned:enqueue(brain.jobs:dequeue()) --move to brain.summoned queue
       local closest = brain.yard:send()
+      
       if closest == nil then 
         print("Error! No yards have trains avalable")
         common.pulse(settings.redstone.error, brain.handleEvents)
         brain.summoned:dequeue()
+        os.queueEvent( "job_count", brain.jobs:size() + brain.summoned:size() );
         return;
       end -- if error
       brain.requestRemote(closest)
@@ -255,6 +257,7 @@ function handleMessages(event)
       if message.directive == "yard_status" and (message.to == settings.stationID or message.to == nil )then -- manage adding the yard to the yard object
         print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
         local obj = brain.yard:get(message.stationID)
+        
         if obj ~= nil then -- object exists.  test to see if we need to replace
           if obj.distance ~= senderDistance then --replace because the distance changed
             print("Yard distance changed! Replacing!")
@@ -282,7 +285,7 @@ function handleMessages(event)
 
         if message.computerType == "loading_platform" then -- Loading platform!
           if message.directive == "connect_parent" then 
-            common.tprint(message)
+            
             brain.platforms[message.payload.priority] = {name=message.payload.platformName, destination=nil, trainPresent=message.payload.trainPresent} --save device data
             
             local mess = {routes=settings.routes, type=settings.computerType}

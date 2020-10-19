@@ -56,7 +56,7 @@ function handleMessages(event)
     if message ~= nil and message.networkID == settings.networkID and message.stationID == settings.stationID then -- this is a message for us 
       print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
 
-      if message.computerType == "ticketmaster" then -- Message from ticket master!
+      if message.computerType == "ticketmaster" or message.computerType == "yardmaster" then -- Message from ticket master!
         if message.directive == settings.priority..":connect" then 
           station.routes = message.payload.routes -- save routes
           station.type = message.payload.type
@@ -69,6 +69,7 @@ function handleMessages(event)
 
         if message.directive == "setDestination" and message.payload.priority == settings.priority then -- set a destination and print it
           destination = message.payload.destination
+          
           if printTickets(message.payload.destination) == false then 
             common.sendMessage("error", {priority=settings.priority, message="Could not print tickets"})
           elseif settings.autogo == true or station.type == "yardmaster" then 
