@@ -51,7 +51,6 @@ end -- function
 
 function handleBrainEvent(event)
     if event[1] == "setDestination" then --update yard status
-
         sendYardStatus()
     end -- event jobcount
 end--function handleBrainEvent

@@ -14,6 +14,7 @@ settings.networkID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the y
 
 settings.autogo = false -- will not wait for 'trainReady' to pulse.  will be set to true if connected to a yardmaster
 
+settings.printDelay = 0.3 -- how much time it takes in seconds for a ticket to be transfered from the printer to the cart
 
 settings.redstone = {
     --input

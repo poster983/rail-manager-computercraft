@@ -48,6 +48,16 @@ function printString(string)
 end 
 
 
+function printerDelay(destination) 
+  local route = station.routes[destination]
+  if route == nil then 
+    return 0;
+  end -- if
+  local len = table.getn(route)
+  return settings.printDelay * len
+end 
+
+
 function handleMessages(event) 
   if event[1] == "modem_message" then 
     local event, modemSide, senderChannel, 
@@ -73,6 +83,8 @@ function handleMessages(event)
           if printTickets(message.payload.destination) == false then 
             common.sendMessage("error", {priority=settings.priority, message="Could not print tickets"})
           elseif settings.autogo == true or station.type == "yardmaster" then 
+            --wait for the printer to finish 
+            common.wait(printerDelay(message.payload.destination), handleEvents)
             common.sendMessage("train_ready", settings.priority)
           end -- if 
         end -- directive reconnect
