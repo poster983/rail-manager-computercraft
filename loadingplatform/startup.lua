@@ -54,7 +54,7 @@ function printerDelay(destination)
     return 0;
   end -- if
   local len = table.getn(route)
-  return settings.printDelay * len
+  return (settings.printDelay * len)+2
 end 
 
 
