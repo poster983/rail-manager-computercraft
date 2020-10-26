@@ -275,6 +275,7 @@ function handleMessages(event)
       end -- if yard_status
 
       if message.directive == "request_train" and message.to == settings.stationID then --send trains to remote station
+        print("Remote train requested from: ".. message.payload)
         brain.newDestination(message.payload)
       end --if
 

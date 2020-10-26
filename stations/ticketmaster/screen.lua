@@ -13,12 +13,22 @@ button.setMonitor(monitor)
 --get screen size
 local w, h = monitor.getSize()
 
-
-
+--removes routes that have the hide=true property 
+function filterRoutes() 
+  local out = {}
+  for k, v in pairs(settings.routes) do
+    --add to new table if it should not be hidden
+    if v["hide"] ~= true then
+      out[k] = v
+    end
+  end
+  return out
+end
 
 --build the buttons 
 screen.buildButtons = function()
-  local routeKeys = common.getTableKeys(settings.routes);
+  local routes = filterRoutes()
+  local routeKeys = common.getTableKeys(routes);
   local buttons = {}
   local buttonPadding = 2;
   local buttonWidth = (w/2);
@@ -27,7 +37,7 @@ screen.buildButtons = function()
   print(buttonWidth, buttonHeight)
   local x=0 --col
   local y=0 --row
-  for k, v in pairs(settings.routes) do
+  for k, v in pairs(routes) do
     local bx = buttonPadding --button x 
     local by = buttonPadding --button y
     --find the coords of the button

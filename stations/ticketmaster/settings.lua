@@ -14,12 +14,15 @@ settings.cableSide = "back" -- redstone cable
 settings.modemChannel = 1 
 -- Route Table (Chnage for each station)
 settings.routes = {}
-settings.routes["Doof"] = {junctions.villageEntrance, junctions.doofEntrance};
+settings.routes["Doofenshmirtz Evil Inc"] = {junctions.villageEntrance, junctions.doofEntrance};
+settings.routes["Doof Yard"] = {junctions.doofYardEntrance, hide=true};
 settings.routes["Village"] = {junctions.villageEntrance};
-settings.routes["Hub Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
+settings.routes["Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
 settings.routes["Main Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn, hide=true};
 settings.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance}
 settings.routes["Castle"] = {junctions.yardNorthboundUTurn}
+settings.routes["Castle Yard"] = {junctions.yardNorthboundUTurn, hide=true}
+settings.routes["Fisherman Village"] = {junctions.yardNorthboundUTurn}
 settings.routes["Power Plant"] = {junctions.yardNorthboundUTurn}
 
 

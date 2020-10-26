@@ -32,6 +32,10 @@ function handleNetworkEvents(event)
             --[[STATION DIRECTIVES]]
 
             if message.stationID == settings.stationID then
+
+                if message.computerType == "loading_platform" and message.directive == "connect_parent" then -- Loading platform!
+                        sendYardStatus()
+                end
                 
                 if message.directive == "train_status" then --send yard status update to all computers!
                     sendYardStatus()
