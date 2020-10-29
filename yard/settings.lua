@@ -24,7 +24,7 @@ settings.redstone = {
     --output
     error=colors.red, -- pulses when an error occurs in the station.  Like a printer is out of paper or ink
     trainLeaving=colors.green, -- pulses when a train is leaving the station
-    trainArriving=colors.black, -- pulses when a train arrives at the station
+    trainArriving=colors.pink, -- pulses when a train arrives at the station
 }
 
 return settings;

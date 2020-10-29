@@ -22,7 +22,7 @@ settings.redstone = {
     trainPresent=colors.black, -- in if true
 
     --output
-    sendTrain=colors.blue, -- output pulse  
+    sendTrain=colors.lime, -- output pulse  
 
 }
 return settings
