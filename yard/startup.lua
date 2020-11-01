@@ -2,11 +2,15 @@ local settings = require("./settings")
 local common = require("./common")
 local brain = require("./brain")
 
-
+-- restocks a train when the station is low
 function restock()
     local trainsRequested = 0;
-    local curr = brain.yard:iterator()
+    --local curr = brain.yard:iterator()
     local platforms = brain.platformStatus()
+    if platforms.avalable == 0 then 
+    	local closest = brain.yard:send(true)
+    	brain.requestRemote(closest)
+    end 
 end --restock
 
 function sendYardStatus(to)
