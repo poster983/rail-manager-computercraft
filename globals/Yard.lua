@@ -121,8 +121,13 @@ end -- closest
 -- honorMinTrains if true will use whatever is set in settings.minTrains instead of 0
 function Yard:send(honorMinTrains)
     local curr = self._front
+    
     while curr ~= nil do
-        if curr.data.platforms.available > (honorMinTrains)?curr.data.minTrains:0 then 
+    	local compareTo = 0
+        if honorMinTrains then 
+    	    compareTo = curr.data.minTrains
+    	end 
+        if curr.data.platforms.available > compareTo then 
             return curr.data.stationID
         end -- if 
 

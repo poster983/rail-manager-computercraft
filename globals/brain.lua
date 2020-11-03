@@ -252,7 +252,7 @@ brain.restock = function()
     -- make sure there is room 
     if platforms.filled < minTrains then 
     --Loop untill we have restocked the right amount of trains 
-    	while trainsRequested < minTrains then 
+    	while trainsRequested < minTrains do 
     		local closest = brain.yard:send(true)
     		brain.requestRemote(closest)
     		trainsRequested = trainsRequested+1
