@@ -11,8 +11,8 @@ end
 
 --sorts yards by distance
 --platforms: {total=int, filled=int, available=int}
-function Yard:add (stationID, distance, platforms)
-    local data = {distance=distance, stationID=stationID, platforms=platforms}
+function Yard:add (stationID, distance, platforms, minTrains)
+    local data = {distance=distance, stationID=stationID, platforms=platforms, minTrains=minTrains}
     local node = {}
     node.data = data
     node.next = nil

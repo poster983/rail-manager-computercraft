@@ -291,14 +291,14 @@ function handleMessages(event)
           if obj.distance ~= senderDistance then --replace because the distance changed
             print("Yard distance changed! Replacing!")
             brain.yard:remove(message.stationID)
-            brain.yard:add(message.stationID, senderDistance, message.payload.platforms)
+            brain.yard:add(message.stationID, senderDistance, message.payload.platforms, message.payload.minTrains)
           else
             print("Updating existing yard!")
             brain.yard:update(message.stationID, message.payload.platforms)
           end -- if 
         else -- this is a new station we dont know about
           print("Brand New Station Detected!")
-          brain.yard:add(message.stationID, senderDistance, message.payload.platforms)
+          brain.yard:add(message.stationID, senderDistance, message.payload.platforms, message.payload.minTrains)
         end --if
 
       end -- if yard_status
