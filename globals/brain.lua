@@ -250,7 +250,7 @@ brain.restock = function()
     if minTrains < platforms.total then 
     	minTrains = platforms.total
     end
-    print("Restocking " .. tostring(minTrains) .. " train(s)"
+    print("Restocking " .. tostring(minTrains) .. " train(s)")
     -- make sure there is room 
     if platforms.filled < minTrains then 
     --Loop untill we have restocked the right amount of trains 
