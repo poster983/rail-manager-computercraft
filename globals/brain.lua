@@ -254,7 +254,12 @@ brain.restock = function()
     --Loop untill we have restocked the right amount of trains 
     	while trainsRequested < minTrains do 
     		local closest = brain.yard:send(true)
+    		if closest == nil then -- no stations avalable to send a train
+    			print("No station avalable to send a train")
+    			return 
+    		end 
     		brain.requestRemote(closest)
+    			
     		trainsRequested = trainsRequested+1
     	end
     end 
