@@ -242,6 +242,7 @@ end --request remote
 
 -- restocks a train when the station is low
 brain.restock = function()
+	
     local trainsRequested = 0;
     local minTrains = settings.minTrains
     local platforms = brain.platformStatus()
@@ -249,6 +250,7 @@ brain.restock = function()
     if minTrains < platforms.total then 
     	minTrains = platforms.total
     end
+    print("Restocking " .. tostring(minTrains) .. " train(s)"
     -- make sure there is room 
     if platforms.filled < minTrains then 
     --Loop untill we have restocked the right amount of trains 
