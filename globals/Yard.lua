@@ -118,11 +118,11 @@ function Yard:receive()
 end -- closest
 
 --returns the closest avalable stationID (closest yard) to send its trains. I.E, the avalable number of avalable trains is > 0.  returns nil if there are no yards
--- keepOne when set to true will make sure there is at least one train left after sending one (used for the restock function)
-function Yard:send(keepOne)
+-- honorMinTrains if true will use whatever is set in settings.minTrains instead of 0
+function Yard:send(honorMinTrains)
     local curr = self._front
     while curr ~= nil do
-        if curr.data.platforms.available > (keepOne)?1:0 then 
+        if curr.data.platforms.available > (honorMinTrains)?curr.data.minTrains:0 then 
             return curr.data.stationID
         end -- if 
 

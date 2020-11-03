@@ -238,6 +238,28 @@ brain.requestRemote = function(stationID)
 end --request remote
 
 
+
+
+-- restocks a train when the station is low
+brain.restock = function()
+    local trainsRequested = 0;
+    local minTrains = settings.minTrains
+    local platforms = brain.platformStatus()
+    --if minTrains is bigger than the total number of trains in the station, Reduce minTrains
+    if minTrains < platforms.total then 
+    	minTrains = platforms.total
+    end
+    -- make sure there is room 
+    if platforms.filled < minTrains then 
+    --Loop untill we have restocked the right amount of trains 
+    	while trainsRequested < minTrains then 
+    		local closest = brain.yard:send(true)
+    		brain.requestRemote(closest)
+    		trainsRequested = trainsRequested+1
+    	end
+    end 
+end --restock
+
 --[[ YARD FUNCTIONS ]]
 ----------------------
 
@@ -350,6 +372,9 @@ function handleRedstoneEvent(event)
       print("Redstone event: lineClearPulse" )
       --line clear 
       sendNextTrain()
+      
+      -- also try and restock
+      brain.restock()
 
     end -- if line clear 
     

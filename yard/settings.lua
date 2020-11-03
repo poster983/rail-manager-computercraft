@@ -11,9 +11,12 @@ settings.networkID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the n
 settings.modemSide = "right"
 settings.cableSide = "back" -- redstone cable
 settings.modemChannel = 1 
+
+settings.minTrains = 1 -- the number of trains to always keep in the station.  0 will disable the feature.
 -- Route Table (Chnage for each station)
 settings.routes = {}
 settings.routes["All (Debug)"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn,junctions.villageEntrance,junctions.doofEntrance, junctions.villageWestboundUTurn, junctions.yardEntrance, junctions.mainYardBaseBypass}
+
 
 
 settings.redstone = {

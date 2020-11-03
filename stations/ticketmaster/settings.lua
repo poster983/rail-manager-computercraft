@@ -12,6 +12,9 @@ settings.screenSide = "top"
 settings.modemSide = "right"
 settings.cableSide = "back" -- redstone cable
 settings.modemChannel = 1 
+
+settings.minTrains = 0 -- the number of trains to always keep in the station.  0 will disable the feature.
+
 -- Route Table (Chnage for each station)
 settings.routes = {}
 settings.routes["Doofenshmirtz Evil Inc"] = {junctions.villageEntrance, junctions.doofEntrance};
