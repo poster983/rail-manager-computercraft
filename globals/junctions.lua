@@ -21,13 +21,20 @@ local junctions = {
     --Main Base
     baseEntrance="Base Entrance", 
 
+	-- house 
+	houseEntrance="House Entrance",
+	houseExitEast="House Exit East",
+	
+	
+	
 
     ----JUNCTIONS
 
     --powerCastle
-    powerCastleNorth="Power Castle North"
-    powerCastleWest="Power Castle West"
+    powerCastleNorth="Power Castle North",
+    powerCastleWest="Power Castle West",
 
+	
     
   }
   
