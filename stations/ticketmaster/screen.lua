@@ -6,7 +6,7 @@ os.loadAPI("button")
 
 local screen = {}
 
-local currentPage = 1
+local currentPage = 0
 
 
 local monitor = peripheral.wrap( settings.screenSide )
@@ -27,30 +27,45 @@ function filterRoutes()
   return out
 end
 
+local routes = filterRoutes()
+local gRouteKeys = common.getTableKeys(routes);
+local numOfRoutes = table.getn(gRouteKeys);
+
 --build the buttons 
 screen.buildButtons = function(page)
   if page == nil then 
     page = currentPage
-  end
+  end -- if
 
   local conWidth = w
   local conHeight = h-5
-
   
 
-  local routes = filterRoutes()
-  local routeKeys = common.getTableKeys(routes);
+  -- build page
+  local pageRoutes = {}
 
-  local numOfRows = table.getn(routeKeys);
-  local numOfColumns = 2
+  local startIndex = (page * settings.maxButtonsPerPage)+1
+  local p = startIndex
+  while (startIndex + settings.maxButtonsPerPage) > p do 
+    table.insert(pageRoutes, routes[p])
+    p = p+1
+  end -- while
+  
+
+  local routeKeys = common.getTableKeys(pageRoutes);
+  
+
+  local numOfColumns = settings.numOfButtonColumns
+  local numOfRows = table.getn(routeKeys)/numOfColumns;
+  
 
   local buttons = {}
   local buttonPadding = 2;
-  local buttonWidth = (conWidth/2);
+  local buttonWidth = (conWidth/numOfColumns);
   -- find how many rows there will be
   --number of routes (MOD) number of columns
-  if numOfRoutes % numOfColumns ~= 0 then
-    numOfRows = numOfRows+1
+  if numOfRows % numOfColumns ~= 0 then
+    numOfRows = math.ceil(numOfRows)
   end
 
   local buttonHeight = conHeight/numOfRows
@@ -58,16 +73,17 @@ screen.buildButtons = function(page)
   print(buttonWidth, buttonHeight)
   local x=0 --col
   local y=0 --row
-  for k, v in pairs(routes) do
+  for k, v in pairs(pageRoutes) do
     local bx = buttonPadding --button x 
     local by = buttonPadding --button y
     --find the coords of the button
     --find by 
     by = by + (y*buttonHeight)
+    bx = bx + (x*buttonWidth);
     --bx
-    if x == numOfColumns then -- last col
-      bx = bx + buttonWidth;
-      x = 1;
+    if x == numOfColumns-1 then -- last col
+      
+      x = 0;
       y = y+1;
     else 
       x = x + 1;

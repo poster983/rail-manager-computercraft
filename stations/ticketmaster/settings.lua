@@ -32,6 +32,8 @@ settings.routes["Home"] = {junctions.yardNorthboundUTurn, junctions.houseEntranc
 
 settings.buttonColor = colors.blue
 settings.buttonClickColor = colors.red
+settings.numOfButtonColumns = 2
+settings.maxButtonsPerPage = 6
 
 settings.redstone = {
     --input
