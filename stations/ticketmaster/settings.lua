@@ -22,11 +22,12 @@ settings.routes["Doof Yard"] = {junctions.doofYardEntrance, hide=true};
 settings.routes["Village"] = {junctions.villageEntrance};
 settings.routes["Base"] = {junctions.baseEntrance, junctions.yardNorthboundUTurn, junctions.yardSouthboundUTurn}
 settings.routes["Main Yard"] = {junctions.yardEntrance, junctions.yardNorthboundUTurn, hide=true};
-settings.routes["All (Debug)"] = {junctions.houseEntrance, junctions.houseExitEast, junctions.powerCastleNorth, junctions.powerCastleWest}  
+settings.routes["All (Debug)"] = {junctions.houseEntrance, junctions.houseExitEast, junctions.powerCastleNorth, junctions.powerCastleWest}
 settings.routes["Castle"] = {junctions.yardNorthboundUTurn}
 settings.routes["Castle Yard"] = {junctions.yardNorthboundUTurn, hide=true}
 settings.routes["Fisherman Village"] = {junctions.yardNorthboundUTurn}
 settings.routes["Power Plant"] = {junctions.yardNorthboundUTurn}
+settings.routes["Home"] = {junctions.yardNorthboundUTurn, junctions.houseEntrance, junctions.powerCastleWest}
 
 
 settings.buttonColor = colors.blue

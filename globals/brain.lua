@@ -247,12 +247,13 @@ brain.restock = function()
     local minTrains = settings.minTrains
     local platforms = brain.platformStatus()
     --if minTrains is bigger than the total number of trains in the station, Reduce minTrains
-    if minTrains < platforms.total then 
+    if minTrains > platforms.total then 
     	minTrains = platforms.total
     end
-    print("Restocking " .. tostring(minTrains) .. " train(s)")
+    
     -- make sure there is room 
     if platforms.filled < minTrains then 
+      print("Restocking " .. tostring(minTrains) .. " train(s)")
     --Loop untill we have restocked the right amount of trains 
     	while trainsRequested < minTrains do 
     		local closest = brain.yard:send(true)
