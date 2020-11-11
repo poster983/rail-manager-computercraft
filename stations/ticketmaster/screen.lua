@@ -10,7 +10,7 @@ screen.currentPage = 0
 
 screen.buttons = {} 
 
-local pagenationHeight = 5
+
 
 local monitor = peripheral.wrap( settings.screenSide )
 monitor.setTextScale(0.9)
@@ -34,6 +34,38 @@ local routes = filterRoutes()
 local gRouteKeys = common.getTableKeys(routes);
 local numOfRoutes = table.getn(gRouteKeys);
 
+
+--Pagenation 
+local pagenationHeight = 5
+local pagenationStartY = h - pagenationHeight
+local pagenationButtonWidth = 6
+
+--Pagenation buttons
+local nextButton = button.create("Next")
+nextButton.onClickReturn({type="command", value="next"})
+nextButton.setColor(settings.buttonClickColor)
+nextButton.setBlinkColor(settings.buttonColor)
+nextButton.setPos(w-pagenationButtonWidth, pagenationStartY)
+nextButton.setSize(pagenationButtonWidth, pagenationHeight)
+
+local previousButton = button.create("Previous")
+previousButton.onClickReturn({type="command", value="previous"})
+previousButton.setBlinkColor(settings.buttonColor)
+previousButton.setColor(settings.buttonClickColor)
+previousButton.setPos(2, pagenationStartY)
+previousButton.setSize(pagenationButtonWidth, pagenationHeight)
+
+
+function buildPagenationBox() 
+  --paint box
+  local oldterm = term.redirect( monitor )
+  paintutils.drawBox(1,pagenationStartY,w,h, colors.white)
+  term.redirect(oldterm)
+end -- function
+buildPagenationBox()
+
+
+
 --build the buttons 
 screen.buildButtons = function(page)
   if page == nil then 
@@ -43,6 +75,18 @@ screen.buildButtons = function(page)
   local conWidth = w
   local conHeight = h-pagenationHeight
   
+  --set pagenation button status
+  if (page * settings.maxButtonsPerPage) <= numOfRoutes then 
+    nextButton.setActive(true)
+  else 
+    nextButton.setActive(false)
+  end
+
+  if (page - 1) >= 0 then 
+    previousButton.setActive(true)
+  else 
+    previousButton.setActive(false)
+  end
 
   -- build page
   local pageRoutes = {}
@@ -107,22 +151,18 @@ screen.buildButtons = function(page)
     buttons[#buttons+1] = but;
     print(k .. ": x: ".. bx .. " y: " .. by)
   end --for
+  --add pagenation
+  buttons[#buttons+1] = nextButton;
+  buttons[#buttons+1] = previousButton;
   return buttons;
 end --function
 
-function buildPagenation() 
-  local startY = h - pagenationHeight
-  
-  --paint box
-  local oldterm = term.redirect( monitor )
-  paintutils.drawBox(1,startY,w,h, colors.white)
-  term.redirect(oldterm)
 
-end -- function
+
 
 screen.build = function()
   local bttn = screen.buildButtons()
-  buildPagenation()
+  --buildPagenation()
   return bttn
 end -- function
 

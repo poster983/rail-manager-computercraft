@@ -15,6 +15,17 @@ function listenForClick()
       if event ~= nil and event.type == "destination" then 
         brain.newDestination(event.value)
       end -- if 
+      if event ~= nil and event.type == "command" then 
+        --Pagenation
+        if event.value == "next" then 
+          buttons = screen.page.next()
+        end -- if
+        if event.value == "previous" then 
+          buttons = screen.page.prev()
+        end -- if
+
+      end -- if 
+
     end -- while
   end -- function 
 
