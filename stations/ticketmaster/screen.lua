@@ -46,10 +46,13 @@ screen.buildButtons = function(page)
 
   local startIndex = (page * settings.maxButtonsPerPage)+1
   local p = startIndex
-  while (startIndex + settings.maxButtonsPerPage) > p do 
-    table.insert(pageRoutes, routes[p])
-    p = p+1
-  end -- while
+  for k, v in pairs(pageRoutes) do
+    if (startIndex + settings.maxButtonsPerPage) > p then 
+      pageRoutes[k] = v
+    end -- if
+
+    p=p+1
+  end -- for
   
 
   local routeKeys = common.getTableKeys(pageRoutes);
