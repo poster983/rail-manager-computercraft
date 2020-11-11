@@ -6,6 +6,8 @@ os.loadAPI("button")
 
 local screen = {}
 
+local currentPage = 1
+
 
 local monitor = peripheral.wrap( settings.screenSide )
 monitor.setTextScale(0.9)
@@ -26,13 +28,32 @@ function filterRoutes()
 end
 
 --build the buttons 
-screen.buildButtons = function()
+screen.buildButtons = function(page)
+  if page == nil then 
+    page = currentPage
+  end
+
+  local conWidth = w
+  local conHeight = h-5
+
+  
+
   local routes = filterRoutes()
   local routeKeys = common.getTableKeys(routes);
+
+  local numOfRows = table.getn(routeKeys);
+  local numOfColumns = 2
+
   local buttons = {}
   local buttonPadding = 2;
-  local buttonWidth = (w/2);
-  local buttonHeight = ((h/table.getn(routeKeys))*2)-buttonPadding;
+  local buttonWidth = (conWidth/2);
+  -- find how many rows there will be
+  --number of routes (MOD) number of columns
+  if numOfRoutes % numOfColumns ~= 0 then
+    numOfRows = numOfRows+1
+  end
+
+  local buttonHeight = conHeight/numOfRows
 
   print(buttonWidth, buttonHeight)
   local x=0 --col
@@ -44,12 +65,12 @@ screen.buildButtons = function()
     --find by 
     by = by + (y*buttonHeight)
     --bx
-    if x == 1 then -- row 2
+    if x == numOfColumns then -- last col
       bx = bx + buttonWidth;
-      x = 0;
+      x = 1;
       y = y+1;
     else 
-      x = 1;
+      x = x + 1;
     end --if
     
     --add button
@@ -66,6 +87,12 @@ screen.buildButtons = function()
   end --for
   return buttons;
 end --function
+
+
+screen.build = function()
+
+
+end -- function
 
 
 --Full screen alert with text 
