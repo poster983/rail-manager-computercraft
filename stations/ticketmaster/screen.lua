@@ -45,9 +45,9 @@ screen.buildButtons = function(page)
   local pageRoutes = {}
 
   local startIndex = (page * settings.maxButtonsPerPage)+1
-  local p = startIndex
-  for k, v in pairs(pageRoutes) do
-    if (startIndex + settings.maxButtonsPerPage) > p then 
+  local p = 1
+  for k, v in pairs(routes) do
+    if ((startIndex + settings.maxButtonsPerPage) > p) and ( p >= startIndex) then 
       pageRoutes[k] = v
     end -- if
 
