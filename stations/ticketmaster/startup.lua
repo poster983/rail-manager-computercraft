@@ -48,7 +48,7 @@ end -- catchEvents
 function main() 
     brain.main()
     monitor.clear()
-    buttons = screen.buildButtons()
+    buttons = screen.build()
     parallel.waitForAll(catchEvents, listenForClick)
 end -- main 
 

@@ -6,8 +6,11 @@ os.loadAPI("button")
 
 local screen = {}
 
-local currentPage = 0
+screen.currentPage = 0
 
+screen.buttons = {} 
+
+local pagenationHeight = 5
 
 local monitor = peripheral.wrap( settings.screenSide )
 monitor.setTextScale(0.9)
@@ -34,11 +37,11 @@ local numOfRoutes = table.getn(gRouteKeys);
 --build the buttons 
 screen.buildButtons = function(page)
   if page == nil then 
-    page = currentPage
+    page = screen.currentPage
   end -- if
 
   local conWidth = w
-  local conHeight = h-5
+  local conHeight = h-pagenationHeight
   
 
   -- build page
@@ -107,12 +110,39 @@ screen.buildButtons = function(page)
   return buttons;
 end --function
 
-
-screen.build = function()
-
+function buildPagenation() 
+  local startY = h - pagenationHeight
+  
+  --paint box
+  local oldterm = term.redirect( monitor )
+  paintutils.drawBox(1,startY,w,h, colors.white)
+  term.redirect(oldterm)
 
 end -- function
 
+screen.build = function()
+  local bttn = screen.buildButtons()
+  buildPagenation()
+  return bttn
+end -- function
+
+
+screen.page = {}
+screen.page.next = function() 
+  if (screen.currentPage * settings.maxButtonsPerPage) <= numOfRoutes then 
+    screen.currentPage = screen.currentPage +1
+  end -- if
+
+  return screen.build()
+end -- function 
+
+screen.page.prev = function() 
+  if (screen.currentPage - 1) >= 0 then 
+    screen.currentPage = screen.currentPage-1
+    
+  end -- if
+  return screen.build()
+end -- function 
 
 --Full screen alert with text 
 screen.alert = function(text, textColor, bgColor, clearColor, time) 
