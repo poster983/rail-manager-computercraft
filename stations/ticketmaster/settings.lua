@@ -30,7 +30,7 @@ settings.routes["Power Plant"] = {junctions.yardNorthboundUTurn}
 settings.routes["Home"] = {junctions.yardNorthboundUTurn, junctions.houseEntrance, junctions.powerCastleWest}
 
 
-settings.buttonColor = colors.blue
+settings.buttonColor = colors.cyan
 settings.buttonClickColor = colors.red
 settings.numOfButtonColumns = 2
 settings.maxButtonsPerPage = 6
