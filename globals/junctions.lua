@@ -24,7 +24,14 @@ local junctions = {
 	-- house 
 	houseEntrance="House Entrance",
 	houseExitEast="House Exit East",
-	
+    
+    
+    --castle
+    castleSouthEntrance="Castle South Entrance",
+    castleSouthYardEntrance="Castle South Yard Entrance",
+
+    -- Mountain village
+    mountainVillageEntrance="Mountain Village Entrance",
 	
 	
 
@@ -33,6 +40,10 @@ local junctions = {
     --powerCastle
     powerCastleNorth="Power Castle North",
     powerCastleWest="Power Castle West",
+
+    --mountainCastle
+    mountainCastleWest="Mountain Castle West"
+    mountainCastleNorth="Mountain Castle West"
 
 	
     
