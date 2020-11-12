@@ -42,8 +42,8 @@ local junctions = {
     powerCastleWest="Power Castle West",
 
     --mountainCastle
-    mountainCastleWest="Mountain Castle West"
-    mountainCastleNorth="Mountain Castle West"
+    mountainCastleWest="Mountain Castle West",
+    mountainCastleNorth="Mountain Castle West",
 
 	
     
