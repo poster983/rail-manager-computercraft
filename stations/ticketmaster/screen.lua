@@ -43,7 +43,7 @@ local numOfRoutes = table.getn(gRouteKeys);
 
 --Pagenation 
 local pagenationHeight = 5
-local pagenationStartY = 1
+
 local pagenationButtonWidth = 10
 
 --Pagenation buttons
@@ -51,17 +51,17 @@ local nextButton = button.create("Next")
 nextButton.onClickReturn({type="command", value="next"})
 nextButton.setColor(colors.green)
 nextButton.setBlinkColor(colors.red)
-nextButton.setPos(w-pagenationButtonWidth, pagenationStartY+1)
+nextButton.setPos(w-pagenationButtonWidth, 1)
 nextButton.setSize(pagenationButtonWidth, pagenationHeight)
 
 local previousButton = button.create("Previous")
 previousButton.onClickReturn({type="command", value="previous"})
 previousButton.setBlinkColor(colors.orange)
 previousButton.setColor(colors.red)
-previousButton.setPos(2, pagenationStartY+1)
+previousButton.setPos(2, 1)
 previousButton.setSize(pagenationButtonWidth, pagenationHeight)
 
-filledBox(1,pagenationStartY,w,h, colors.blue)
+filledBox(1,1,w,pagenationHeight, colors.blue)
 
 
 
@@ -78,7 +78,7 @@ screen.buildButtons = function(page)
   local conHeight = h-pagenationHeight
 
   --Clear background
-  filledBox(pagenationHeight,1,conWidth,h, colors.black)
+  filledBox(pagenationHeight,1,conWidth,h, colors.lightBlue)
 
 
   --set pagenation button status
@@ -199,8 +199,8 @@ end -- function alert
 --show current jobs
 screen.printJobCount = function(count)
   --clear the text area
-    filledBox((w/2)-8, h-1, (w/2)+8, h-1, colors.white)
-    monitor.setCursorPos((w/2)-8,h-1)
+    filledBox((w/2)-8, 2, (w/2)+8, 2, colors.blue)
+    monitor.setCursorPos((w/2)-8,2)
     monitor.setTextColor(colors.black)
     --monitor.clearLine()
     if count == 1 then -- singular 
