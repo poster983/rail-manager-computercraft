@@ -20,7 +20,7 @@ local w, h = monitor.getSize()
 
 function filledBox(startX, startY, endX, endY, color)
   local oldterm = term.redirect( monitor )
-  paintutils.drawFilledBox(1,1,conWidth,conHeight, colors.black)
+  paintutils.drawFilledBox(startX,startY,endX,endY, color)
   term.redirect(oldterm)
 end --function
 
@@ -82,7 +82,7 @@ screen.buildButtons = function(page)
 
 
   --set pagenation button status
-  if (page+1 * settings.maxButtonsPerPage) < numOfRoutes then 
+  if ((page+1) * settings.maxButtonsPerPage) <= numOfRoutes then 
     nextButton.setActive(true)
   else 
     nextButton.setActive(false)
@@ -175,7 +175,7 @@ end -- function
 
 screen.page = {}
 screen.page.next = function() 
-  if (screen.currentPage+1 * settings.maxButtonsPerPage) <= numOfRoutes then 
+  if ((screen.currentPage+1) * settings.maxButtonsPerPage) <= numOfRoutes then 
     screen.currentPage = screen.currentPage +1
   end -- if
 
@@ -201,7 +201,8 @@ screen.printJobCount = function(count)
   --clear the text area
     filledBox((w/2)-8, h-1, (w/2)+8, h-1, colors.white)
     monitor.setCursorPos((w/2)-8,h-1)
-    monitor.clearLine()
+    monitor.setTextColor(colors.black)
+    --monitor.clearLine()
     if count == 1 then -- singular 
         monitor.write(count .. " Train incoming")
     end 
