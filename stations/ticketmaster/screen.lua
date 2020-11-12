@@ -38,45 +38,45 @@ local numOfRoutes = table.getn(gRouteKeys);
 --Pagenation 
 local pagenationHeight = 5
 local pagenationStartY = h - pagenationHeight
-local pagenationButtonWidth = 6
+local pagenationButtonWidth = 10
 
 --Pagenation buttons
 local nextButton = button.create("Next")
 nextButton.onClickReturn({type="command", value="next"})
 nextButton.setColor(settings.buttonClickColor)
 nextButton.setBlinkColor(settings.buttonColor)
-nextButton.setPos(w-pagenationButtonWidth, pagenationStartY)
+nextButton.setPos(w-pagenationButtonWidth, pagenationStartY+1)
 nextButton.setSize(pagenationButtonWidth, pagenationHeight)
 
 local previousButton = button.create("Previous")
 previousButton.onClickReturn({type="command", value="previous"})
 previousButton.setBlinkColor(settings.buttonColor)
 previousButton.setColor(settings.buttonClickColor)
-previousButton.setPos(2, pagenationStartY)
+previousButton.setPos(2, pagenationStartY+1)
 previousButton.setSize(pagenationButtonWidth, pagenationHeight)
 
+filledBox(1,pagenationStartY,w,h, colors.white)
 
-function buildPagenationBox() 
-  --paint box
-  local oldterm = term.redirect( monitor )
-  paintutils.drawBox(1,pagenationStartY,w,h, colors.white)
-  term.redirect(oldterm)
-end -- function
-buildPagenationBox()
+
 
 
 
 --build the buttons 
 screen.buildButtons = function(page)
+  
   if page == nil then 
     page = screen.currentPage
   end -- if
 
   local conWidth = w
   local conHeight = h-pagenationHeight
-  
+
+  --Clear background
+  filledBox(1,1,conWidth,conHeight, colors.black)
+
+
   --set pagenation button status
-  if (page * settings.maxButtonsPerPage) <= numOfRoutes then 
+  if (page+1 * settings.maxButtonsPerPage) < numOfRoutes then 
     nextButton.setActive(true)
   else 
     nextButton.setActive(false)
@@ -169,7 +169,7 @@ end -- function
 
 screen.page = {}
 screen.page.next = function() 
-  if (screen.currentPage * settings.maxButtonsPerPage) <= numOfRoutes then 
+  if (screen.currentPage+1 * settings.maxButtonsPerPage) <= numOfRoutes then 
     screen.currentPage = screen.currentPage +1
   end -- if
 
@@ -192,7 +192,9 @@ end -- function alert
 
 --show current jobs
 screen.printJobCount = function(count)
-    monitor.setCursorPos(1,1)
+  --clear the text area
+    filledBox((w/2)-8, h-1, (w/2)+8, h-1, colors.white)
+    monitor.setCursorPos((w/2)-8,h-1)
     monitor.clearLine()
     if count == 1 then -- singular 
         monitor.write(count .. " Train incoming")
@@ -203,6 +205,10 @@ screen.printJobCount = function(count)
 end --printJobCount
 
 
-
+function filledBox(startX, startY, endX, endY, color)
+  local oldterm = term.redirect( monitor )
+  paintutils.drawFilledBox(1,1,conWidth,conHeight, colors.black)
+  term.redirect(oldterm)
+end --function
 
 return screen;
