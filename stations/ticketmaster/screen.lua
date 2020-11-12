@@ -43,25 +43,25 @@ local numOfRoutes = table.getn(gRouteKeys);
 
 --Pagenation 
 local pagenationHeight = 5
-local pagenationStartY = h - pagenationHeight
+local pagenationStartY = 1
 local pagenationButtonWidth = 10
 
 --Pagenation buttons
 local nextButton = button.create("Next")
 nextButton.onClickReturn({type="command", value="next"})
-nextButton.setColor(settings.buttonClickColor)
-nextButton.setBlinkColor(settings.buttonColor)
+nextButton.setColor(colors.green)
+nextButton.setBlinkColor(colors.red)
 nextButton.setPos(w-pagenationButtonWidth, pagenationStartY+1)
 nextButton.setSize(pagenationButtonWidth, pagenationHeight)
 
 local previousButton = button.create("Previous")
 previousButton.onClickReturn({type="command", value="previous"})
-previousButton.setBlinkColor(settings.buttonColor)
-previousButton.setColor(settings.buttonClickColor)
+previousButton.setBlinkColor(colors.orange)
+previousButton.setColor(colors.red)
 previousButton.setPos(2, pagenationStartY+1)
 previousButton.setSize(pagenationButtonWidth, pagenationHeight)
 
-filledBox(1,pagenationStartY,w,h, colors.white)
+filledBox(1,pagenationStartY,w,h, colors.blue)
 
 
 
@@ -78,7 +78,7 @@ screen.buildButtons = function(page)
   local conHeight = h-pagenationHeight
 
   --Clear background
-  filledBox(1,1,conWidth,conHeight, colors.black)
+  filledBox(pagenationHeight,1,conWidth,h, colors.black)
 
 
   --set pagenation button status
@@ -130,8 +130,8 @@ screen.buildButtons = function(page)
   local x=0 --col
   local y=0 --row
   for k, v in pairs(pageRoutes) do
-    local bx = buttonPadding --button x 
-    local by = buttonPadding --button y
+    local bx = buttonPadding  --button x 
+    local by = buttonPadding + pagenationHeight--button y
     --find the coords of the button
     --find by 
     by = by + (y*buttonHeight)
