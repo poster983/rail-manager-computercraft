@@ -18,6 +18,12 @@ button.setMonitor(monitor)
 --get screen size
 local w, h = monitor.getSize()
 
+function filledBox(startX, startY, endX, endY, color)
+  local oldterm = term.redirect( monitor )
+  paintutils.drawFilledBox(1,1,conWidth,conHeight, colors.black)
+  term.redirect(oldterm)
+end --function
+
 --removes routes that have the hide=true property 
 function filterRoutes() 
   local out = {}
@@ -205,10 +211,6 @@ screen.printJobCount = function(count)
 end --printJobCount
 
 
-function filledBox(startX, startY, endX, endY, color)
-  local oldterm = term.redirect( monitor )
-  paintutils.drawFilledBox(1,1,conWidth,conHeight, colors.black)
-  term.redirect(oldterm)
-end --function
+
 
 return screen;
