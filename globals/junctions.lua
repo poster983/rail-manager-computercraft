@@ -30,6 +30,8 @@ local junctions = {
     castleSouthEntrance="Castle South Entrance",
     castleSouthYardEntrance="Castle South Yard Entrance",
 
+    castleNorthEntrance="Castle North Entrance",
+
     -- Mountain village
     mountainVillageEntrance="Mountain Village Entrance",
 	
