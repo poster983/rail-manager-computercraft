@@ -13,6 +13,29 @@ if args[2] ~=nil and args[2] == "-f" then
   forse = true
 end --if
 
+-- install configuration manager 
+local confFile = {}
+
+local _confFile = fs.open( "userfile", "r" )
+if _confFile == nil then -- create the file and ask for configs
+	_confFile.close()
+	
+	print("This install script can use your own configuration when updating.￼")
+	print("To enable this feature please provide the raw links to your config files below.  (E.X. pastebin.com/raw/qwAH5FD)")
+	
+	print("    direct url to your junctions.lua file")
+	confFile.junctionsURL = read()
+	if junctionsURL == nil or junctionsURL == "" then 
+		confFile.junctionsURL = nil
+	end
+    confFile.settingsURL = nil
+	
+else -- file exists
+	confFile = textutils.unserialize( _confFile.readAll() )
+end -- if
+
+
+_confFile.close()
 
 function download(url, file)
     local content = http.get(url).readAll()
