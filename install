@@ -1,8 +1,11 @@
 --This inatalls the nessessary files for the computer type given
 local args = {...}
 local forse = false;
+
+
+
 function argErr() 
-  error("Usage: "..shell.getRunningProgram().." <computer type> [-f] \n Valid computer types include: yardmaster, infoboard, ticketmaster, loadingplatform \n Options: \n -f: forse.  This will overwrite any settings files or unchanging files")
+  error("Usage: "..shell.getRunningProgram().." <computer type> [-f] \n Valid computer types include: yardmaster, infoboard, ticketmaster, loadingplatform \n Options: \n -f: forse.  This will overwrite any settings files or unchanging files with either the defaults or the files linked in the install.conf file")
 end -- function 
 
 if #args ~= 1 and #args ~= 2 then
@@ -16,9 +19,9 @@ end --if
 -- install configuration manager 
 local confFile = {}
 
-local _confFile = fs.open( "userfile", "r" )
-if _confFile == nil then -- create the file and ask for configs
-	_confFile.close()
+local installConf = fs.open( "install.conf", "r" )
+if installConf == nil then -- create the file and ask for configs
+  installConf.close()
 	
 	print("This install script can use your own configuration when updating.￼")
 	print("To enable this feature please provide the raw links to your config files below.  (E.X. pastebin.com/raw/qwAH5FD)")
@@ -27,15 +30,26 @@ if _confFile == nil then -- create the file and ask for configs
 	confFile.junctionsURL = read()
 	if junctionsURL == nil or junctionsURL == "" then 
 		confFile.junctionsURL = nil
+  end
+  
+  print("    direct url to your settings.lua file")
+	confFile.settingsURL = read()
+	if junctionsURL == nil or junctionsURL == "" then 
+		confFile.settingsURL = nil
 	end
-    confFile.settingsURL = nil
+  
+  print("You can edit this later in the file: install.conf ")
+
+  local installConf = fs.open( "install.conf", "w" )
+  installConf.write(textutils.serialize(confFile))
+
 	
 else -- file exists
-	confFile = textutils.unserialize( _confFile.readAll() )
+	confFile = textutils.unserialize( installConf.readAll() )
 end -- if
 
 
-_confFile.close()
+installConf.close()
 
 function download(url, file)
     local content = http.get(url).readAll()
@@ -74,6 +88,9 @@ local files = {
     startup={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/yard/startup.lua", name="startup.lua"},
   },
 }
+
+--override the links with the user defined links:
+
 
 local computerTypes = {
     ticketmaster={
