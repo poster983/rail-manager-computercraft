@@ -90,6 +90,16 @@ local files = {
 }
 
 --override the links with the user defined links:
+if confFile.junctionsURL ~= nil then 
+	files.globals.junctions.url = confFile.junctionsURL
+end --if
+
+if confFile.settingsURL ~= nil then 
+	files.ticketmaster.settings.url = confFile.settingsURL
+	files.loadingplatform.settings.url = confFile.settingsURL
+	files.infoboard.settings.url = confFile.settingsURL
+	files.yardmaster.settings.url = confFile.settingsURL
+end --if
 
 
 local computerTypes = {
