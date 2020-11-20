@@ -88,7 +88,7 @@ function nextJob()
   end -- for 
 
   if platformEmpty and brain.jobs:size() ~= 0 and brain.summoned:size() < table.getn(brain.platforms)-numOfPresentTrains then --call a train
-      --SEND CALL FOR TRAIN FROM HUB TODOOOO
+      
       print("Call Train")
       brain.summoned:enqueue(brain.jobs:dequeue()) --move to brain.summoned queue
       local closest = brain.yard:send()
@@ -243,7 +243,7 @@ end --request remote
 -- restocks a train when the station is low
 brain.restock = function()
 	
-    local trainsRequested = 0;
+    local trainsRequested = brain.summoned:size() + brain.jobs:size();
     local minTrains = settings.minTrains
     local platforms = brain.platformStatus()
     --if minTrains is bigger than the total number of trains in the station, Reduce minTrains
@@ -253,7 +253,7 @@ brain.restock = function()
     
     -- make sure there is room 
     if platforms.filled < minTrains then 
-      print("Restocking " .. tostring(minTrains) .. " train(s)")
+      print("Restocking " .. tostring(minTrains-trainsRequested) .. " train(s)")
     --Loop untill we have restocked the right amount of trains 
     	while trainsRequested < minTrains do 
     		local closest = brain.yard:send(true)
