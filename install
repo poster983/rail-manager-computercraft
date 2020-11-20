@@ -20,21 +20,22 @@ end --if
 local confFile = {}
 
 local installConf = fs.open( "install.conf", "r" )
+
 if installConf == nil then -- create the file and ask for configs
-  installConf.close()
+  confFile.computerType = args[1]
 	
 	print("This install script can use your own configuration when updating.￼")
 	print("To enable this feature please provide the raw links to your config files below.  (E.X. pastebin.com/raw/qwAH5FD)")
 	
 	print("    direct url to your junctions.lua file")
-	confFile.junctionsURL = read()
-	if junctionsURL == nil or junctionsURL == "" then 
+  confFile.junctionsURL = read()
+	if confFile.junctionsURL == nil or confFile.junctionsURL == "" then 
 		confFile.junctionsURL = nil
   end
   
   print("    direct url to your settings.lua file")
 	confFile.settingsURL = read()
-	if junctionsURL == nil or junctionsURL == "" then 
+	if confFile.settingsURL == nil or confFile.settingsURL == "" then 
 		confFile.settingsURL = nil
 	end
   
@@ -42,14 +43,15 @@ if installConf == nil then -- create the file and ask for configs
 
   local installConf = fs.open( "install.conf", "w" )
   installConf.write(textutils.serialize(confFile))
-
+  installConf.close()
 	
 else -- file exists
-	confFile = textutils.unserialize( installConf.readAll() )
+  confFile = textutils.unserialize( installConf.readAll() )
+  installConf.close()
 end -- if
 
 
-installConf.close()
+
 
 function download(url, file)
     local content = http.get(url).readAll()
