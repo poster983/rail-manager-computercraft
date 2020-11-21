@@ -82,7 +82,7 @@ screen.buildButtons = function(page)
 
 
   --set pagenation button status
-  if ((page+1) * settings.maxButtonsPerPage) <= numOfRoutes then 
+  if ((page+1) * settings.maxButtonsPerPage) < numOfRoutes then 
     nextButton.setActive(true)
   else 
     nextButton.setActive(false)
@@ -175,7 +175,7 @@ end -- function
 
 screen.page = {}
 screen.page.next = function() 
-  if ((screen.currentPage+1) * settings.maxButtonsPerPage) <= numOfRoutes then 
+  if ((screen.currentPage+1) * settings.maxButtonsPerPage) < numOfRoutes then 
     screen.currentPage = screen.currentPage +1
   end -- if
 

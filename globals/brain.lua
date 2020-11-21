@@ -13,9 +13,13 @@ brain.platforms = {} -- platform IDs and such
 brain.jobs = Queue:new(); --create new job queue
 brain.summoned = Queue:new(); -- create a new queue for jobs that had trains summoned for them
 
+brain.restockCount = 0; -- Total number of trains that are currently being restocked
+
 brain.send = Queue:new();
 
-brain.yard = Yard:new()
+brain.yard = Yard:new();
+
+
 
 
 local trainLeaving = false; 
@@ -57,6 +61,7 @@ end -- function
 --checks the queue and sees if any trains are avalable
 function nextJob()
   if brain.jobs:size() == 0 and brain.summoned:size() == 0 then --check if queue is empty 
+      
     return
   end --if 
 
@@ -89,8 +94,14 @@ function nextJob()
 
   if platformEmpty and brain.jobs:size() ~= 0 and brain.summoned:size() < table.getn(brain.platforms)-numOfPresentTrains then --call a train
       
-      print("Call Train")
+      
       brain.summoned:enqueue(brain.jobs:dequeue()) --move to brain.summoned queue
+      if brain.restockCount > 0 then -- try and use an incoming restocking train instead of requesting a new one
+         print("Will use the restock train")
+         brain.restockCount = brain.restockCount-1
+         return;
+      end -- if restock count
+      print("Call Train")
       local closest = brain.yard:send()
       
       if closest == nil then 
@@ -100,6 +111,7 @@ function nextJob()
         os.queueEvent( "job_count", brain.jobs:size() + brain.summoned:size() );
         return;
       end -- if error
+      
       brain.requestRemote(closest)
       return 
   end --if
@@ -243,7 +255,7 @@ end --request remote
 -- restocks a train when the station is low
 brain.restock = function()
 	
-    local trainsRequested = brain.summoned:size() + brain.jobs:size();
+    local trainsRequested = brain.summoned:size() + brain.jobs:size() + brain.restockCount;
     local minTrains = settings.minTrains
     local platforms = brain.platformStatus()
     --if minTrains is bigger than the total number of trains in the station, Reduce minTrains
@@ -252,8 +264,8 @@ brain.restock = function()
     end
     
     -- make sure there is room 
-    if platforms.filled < minTrains then 
-      print("Restocking " .. tostring(minTrains-trainsRequested) .. " train(s)")
+    if platforms.filled < minTrains and trainsRequested < minTrains then 
+      print("Trying to restock " .. tostring(minTrains-trainsRequested) .. " train(s)")
     --Loop untill we have restocked the right amount of trains 
     	while trainsRequested < minTrains do 
     		local closest = brain.yard:send(true)
@@ -262,10 +274,11 @@ brain.restock = function()
     			return 
     		end 
     		brain.requestRemote(closest)
-    			
+    		brain.restockCount = brain.restockCount +1
     		trainsRequested = trainsRequested+1
-    	end
-    end 
+    	end -- while
+        print("There are now " .. tostring(brain.restockCount) .. " train(s) being restocked")
+    end --if 
 end --restock
 
 --[[ YARD FUNCTIONS ]]
@@ -337,6 +350,13 @@ function handleMessages(event)
                 --track no longer has destination
                 brain.platforms[message.payload.priority].destination = nil
               else  -- train arrived!
+                  if brain.restockCount > 0 and brain.jobs:size() == 0 and brain.summoned:size() == 0 then -- new train has arrived and there is nothing in the queue
+                     print("Will use the restock train")
+                     brain.restockCount = brain.restockCount-1
+                     return;
+                  end -- if restock count
+                  
+                 -- play arriving sound
                 redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainArriving))
                 common.wait(0.5, brain.handleEvents)
                 redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.trainArriving))
