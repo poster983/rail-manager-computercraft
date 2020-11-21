@@ -285,20 +285,20 @@ function handleMessages(event)
       --[[YARD STATUS]]
       -----------------
       if message.directive == "yard_status" and (message.to == settings.stationID or message.to == nil )then -- manage adding the yard to the yard object
-        print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
+        --print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
         local obj = brain.yard:get(message.stationID)
         
         if obj ~= nil then -- object exists.  test to see if we need to replace
           if obj.distance ~= senderDistance then --replace because the distance changed
-            print("Yard distance changed! Replacing!")
+            print("Yard distance changed! Replacing! ".. message.stationID)
             brain.yard:remove(message.stationID)
             brain.yard:add(message.stationID, senderDistance, message.payload.platforms, message.payload.minTrains)
           else
-            print("Updating existing yard!")
+            print("Updating existing yard! ".. message.stationID)
             brain.yard:update(message.stationID, message.payload.platforms)
           end -- if 
         else -- this is a new station we dont know about
-          print("Brand New Station Detected!")
+          print("Brand New Station Detected! ".. message.stationID)
           brain.yard:add(message.stationID, senderDistance, message.payload.platforms, message.payload.minTrains)
         end --if
 
