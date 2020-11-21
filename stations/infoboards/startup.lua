@@ -29,11 +29,15 @@ function buildDepartures()
         common.wait(0.1, handleMessages) -- non event blocking wait
     end -- for
     
-    monitor.setCursorPos(1+padding,1)
-    monitor.write("Platform")
-    monitor.setCursorPos(w-(10+padding),1) --5 is the length of the word departures 
-    monitor.write("Departures")
-    
+    if w >=20 then
+        monitor.setCursorPos(1+padding,1)
+        monitor.write("Platform")
+        monitor.setCursorPos(w-(10+padding),1) --5 is the length of the word departures 
+        monitor.write("Departures")
+    else 
+        monitor.setCursorPos((w/2)-5) --5 is the length of the word departures 
+        monitor.write("Departures")
+    end -- if
     local y=2
     --show platforms with destinations at the top
     for i,pf in ipairs(platforms) do
