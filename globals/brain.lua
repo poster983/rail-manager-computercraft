@@ -256,15 +256,15 @@ end --request remote
 brain.restock = function()
 	
     local trainsRequested = brain.summoned:size() + brain.jobs:size() + brain.restockCount;
-    local minTrains = settings.minTrains
     local platforms = brain.platformStatus()
+    local minTrains = settings.minTrains - platforms.filled
     --if minTrains is bigger than the total number of trains in the station, Reduce minTrains
     if minTrains > platforms.total then 
     	minTrains = platforms.total
     end
     
     -- make sure there is room 
-    if platforms.filled < minTrains and trainsRequested < minTrains then 
+    if platforms.filled <= minTrains and trainsRequested < minTrains then 
       print("Trying to restock " .. tostring(minTrains-trainsRequested) .. " train(s)")
     --Loop untill we have restocked the right amount of trains 
     	while trainsRequested < minTrains do 
