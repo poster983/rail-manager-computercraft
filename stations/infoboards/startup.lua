@@ -35,7 +35,7 @@ function buildDepartures()
         monitor.setCursorPos(w-(10+padding),1) --5 is the length of the word departures 
         monitor.write("Departures")
     else 
-        monitor.setCursorPos((w/2)-5) --5 is the length of the word departures 
+        monitor.setCursorPos((w/2)-5, 1) --5 is the length of the word departures 
         monitor.write("Departures")
     end -- if
     local y=2
