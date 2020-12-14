@@ -8,6 +8,19 @@ function argErr()
   error("Usage: "..shell.getRunningProgram().." <computer type> [-f] \n Valid computer types include: yardmaster, infoboard, ticketmaster, loadingplatform \n Options: \n -f: forse.  This will overwrite any settings files or unchanging files with either the defaults or the files linked in the install.conf file")
 end -- function 
 
+
+local confFile = {}
+local installConf = fs.open( "install.conf", "r" )
+if installConf then 
+    confFile = textutils.unserialize( installConf.readAll() )
+end -- if
+
+if confFile.computerType and #args > 2 then 
+    if args[1] ~= nil and args[1] == "-f" then -- forse
+        forse = true
+    end
+end -- if   
+
 if #args ~= 1 and #args ~= 2 then
   argErr()
 end
@@ -17,9 +30,9 @@ if args[2] ~=nil and args[2] == "-f" then
 end --if
 
 -- install configuration manager 
-local confFile = {}
 
-local installConf = fs.open( "install.conf", "r" )
+
+
 
 if installConf == nil then -- create the file and ask for configs
   confFile.computerType = args[1]
@@ -46,7 +59,6 @@ if installConf == nil then -- create the file and ask for configs
   installConf.close()
 	
 else -- file exists
-  confFile = textutils.unserialize( installConf.readAll() )
   installConf.close()
 end -- if
 
