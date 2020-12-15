@@ -15,9 +15,13 @@ local trainReady = false;
 local destination = nil;
 local station = {} --load from network
 
+local isPrintDone = true
+local waitingForTicketsToPrint = false
+
 --Destination is a string matching the station route
 -- Returns true if worked, false if failed
 function printTickets(destination)
+    isPrintDone = false
   --create new page
   local route = station.routes[destination]
   if route == nil then 
@@ -28,6 +32,13 @@ function printTickets(destination)
       return false
     end
   end
+  
+  common.wait(printerDelay(destination), handleEvents)
+  isPrintDone = true
+  if waitingForTicketsToPrint == true then 
+      sendTrain()
+      waitingForTicketsToPrint = false
+  end -- if
   return true;
 end
 
@@ -56,6 +67,12 @@ function printerDelay(destination)
   local len = table.getn(route)
   return (settings.printDelay * len)+2
 end 
+
+function sendTrain() 
+    redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
+    common.wait(0.5, handleEvents)
+    redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
+end --sendTrain
 
 
 function handleMessages(event) 
@@ -90,9 +107,11 @@ function handleMessages(event)
         end -- directive reconnect
 
         if message.directive == "sendTrain" and message.payload == settings.priority then -- Send the train off
-          redstone.setBundledOutput(settings.cableSide, colors.combine(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
-          common.wait(0.5, handleEvents)
-          redstone.setBundledOutput(settings.cableSide, colors.subtract(redstone.getBundledOutput(settings.cableSide), settings.redstone.sendTrain))
+            if isPrintDone then 
+                sendTrain()
+            else 
+                waitingForTicketsToPrint = true
+            end
         end -- end sendtrain
 
       elseif message.computerType == "infoboard" then --infoboard directives
