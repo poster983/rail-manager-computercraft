@@ -1,0 +1,12 @@
+{
+    "Lua.diagnostics.globals": [
+        "redstone",
+        "colors",
+        "parallel",
+        "term",
+        "paintutils",
+        "peripheral",
+        "button"
+    ],
+    "Lua.runtime.version": "Lua 5.1"
+}
