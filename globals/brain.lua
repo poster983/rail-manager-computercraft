@@ -311,8 +311,12 @@ function handleMessages(event)
             brain.yard:update(message.stationID, message.payload.platforms)
           end -- if 
         else -- this is a new station we dont know about
-          print("Brand New Station Detected! ".. message.stationID)
-          brain.yard:add(message.stationID, senderDistance, message.payload.platforms, message.payload.minTrains)
+          if message.payload.knownStations[settings.stationID] then 
+            print("Brand New Station Detected! ".. message.stationID)
+            brain.yard:add(message.stationID, senderDistance, message.payload.platforms, message.payload.minTrains)
+          else 
+            print("Unconfigured Station Detected! ".. message.stationID)
+          end -- if
         end --if
 
       end -- if yard_status

@@ -3,12 +3,14 @@ local common = require("./common")
 local brain = require("./brain")
 
 
+--knownStations = common.getTableKeys(settings.routes)
 
 function sendYardStatus(to)
     print("Sent Yard Status")
     local resp = {
       platforms=brain.platformStatus(), 
-      minTrains=settings.minTrains
+      minTrains=settings.minTrains,
+      knownStations=settings.routes
     } -- get status 
     common.tprint(resp)
     common.sendMessage("yard_status", resp, to)
