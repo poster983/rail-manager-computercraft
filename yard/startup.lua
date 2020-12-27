@@ -12,7 +12,8 @@ function sendYardStatus(to)
       minTrains=settings.minTrains,
       knownStations=settings.routes
     } -- get status 
-    common.tprint(resp)
+    print("platforms: ")
+    common.tprint(resp.platforms)
     common.sendMessage("yard_status", resp, to)
 end --sendYardStatus
 
