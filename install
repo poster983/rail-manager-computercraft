@@ -40,10 +40,14 @@ if installConf == nil then -- create the file and ask for configs
 	print("This install script can use your own configuration when updating.￼")
 	print("To enable this feature please provide the raw links to your config files below.  (E.X. pastebin.com/raw/qwAH5FD)")
 	
-	print("    direct url to your junctions.lua file")
-  confFile.junctionsURL = read()
-	if confFile.junctionsURL == nil or confFile.junctionsURL == "" then 
-		confFile.junctionsURL = nil
+  if confFile.computerType == "yardmaster" or confFile.computerType == "ticketmaster" then 
+    	print("    direct url to your junctions.lua file")
+      confFile.junctionsURL = read()
+    	if confFile.junctionsURL == nil or confFile.junctionsURL == "" then 
+    		confFile.junctionsURL = nil
+      end
+  else 
+    confFile.junctionsURL = nil
   end
   
   print("    direct url to your settings.lua file")
