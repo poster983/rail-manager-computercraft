@@ -8,18 +8,18 @@ function argErr()
   error("Usage: "..shell.getRunningProgram().." <computer type> [-f] \n Valid computer types include: yardmaster, infoboard, ticketmaster, loadingplatform \n Options: \n -f: forse.  This will overwrite any settings files or unchanging files with either the defaults or the files linked in the install.conf file")
 end -- function 
 
-
-local confFile = {}
-local installConf = fs.open( "install.conf", "r" )
-if installConf then 
+if #args == 0 then
+  local installConf = fs.open( "install.conf", "r" )
+  if installConf then 
     confFile = textutils.unserialize( installConf.readAll() )
-end -- if
+    installConf.close()
+    args[1] = confFile.computerType
+    args[2] = "-f"
+    
+  end 
+  
+end
 
-if confFile.computerType and #args > 2 then 
-    if args[1] ~= nil and args[1] == "-f" then -- forse
-        forse = true
-    end
-end -- if   
 
 if #args ~= 1 and #args ~= 2 then
   argErr()
@@ -30,24 +30,22 @@ if args[2] ~=nil and args[2] == "-f" then
 end --if
 
 -- install configuration manager 
+local confFile = {}
 
-
-
+local installConf = fs.open( "install.conf", "r" )
 
 if installConf == nil then -- create the file and ask for configs
   confFile.computerType = args[1]
 	
 	print("This install script can use your own configuration when updating.￼")
 	print("To enable this feature please provide the raw links to your config files below.  (E.X. pastebin.com/raw/qwAH5FD)")
-	
-  if confFile.computerType == "yardmaster" or confFile.computerType == "ticketmaster" then 
-    	print("    direct url to your junctions.lua file")
-      confFile.junctionsURL = read()
-    	if confFile.junctionsURL == nil or confFile.junctionsURL == "" then 
-    		confFile.junctionsURL = nil
-      end
-  else 
-    confFile.junctionsURL = nil
+  
+	if confFile.computerType == "yardmaster" or confFile.computerType == "ticketmaster" then  -- Only show for ticketmaster and yardmaster
+	  print("    direct url to your junctions.lua file")
+    confFile.junctionsURL = read()
+	  if confFile.junctionsURL == nil or confFile.junctionsURL == "" then 
+		  confFile.junctionsURL = nil
+    end
   end
   
   print("    direct url to your settings.lua file")
@@ -63,6 +61,7 @@ if installConf == nil then -- create the file and ask for configs
   installConf.close()
 	
 else -- file exists
+  confFile = textutils.unserialize( installConf.readAll() )
   installConf.close()
 end -- if
 
