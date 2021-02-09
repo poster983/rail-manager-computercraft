@@ -268,7 +268,11 @@ brain.restock = function()
       print("Trying to restock " .. tostring(minTrains-trainsRequested) .. " train(s)")
     --Loop untill we have restocked the right amount of trains 
     	while trainsRequested < minTrains do 
-    		local closest = brain.yard:send(true)
+        local honorMinTrains = true
+        if settings.computerType == "ticketmaster" then 
+          honorMinTrains = false
+        end 
+    		local closest = brain.yard:send(honorMinTrains)
     		if closest == nil then -- no stations avalable to send a train
     			print("No station avalable to send a train")
     			return 
