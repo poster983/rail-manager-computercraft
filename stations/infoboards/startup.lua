@@ -129,7 +129,7 @@ function handleMessages(rawEvent)
         if message ~= nil and message.networkID == settings.networkID then 
             -- message for the whole network 
             --[[UPDATE ALL]]
-              if message.directive == "update_all" then 
+              if message.directive == "update" then 
                 shell.run("update")
                 return
               end
