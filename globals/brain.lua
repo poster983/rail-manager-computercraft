@@ -300,7 +300,7 @@ function handleMessages(event)
     if message ~= nil and message.networkID == settings.networkID then --this is a valid message for out network
       
       --[[UPDATE ALL]]
-      if message.directive == "update_all" then 
+      if message.directive == "update" then 
         shell.run("update")
         return
       end
