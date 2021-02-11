@@ -21,7 +21,7 @@ if #args == 0 then
         args[2] = "-f"
         
     else
-      if confFile.junctionsURL ~= nil and confFile.settingsURL ~= nil then
+      if confFile.settingsURL ~= nil then
         args[2] = "-f"
       end
     end 
