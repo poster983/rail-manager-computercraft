@@ -16,7 +16,7 @@ if #args == 0 then
     installConf.close()
     args[1] = confFile.computerType
     -- make sure both conf files are linked (if applicable)
-    if (confFile.computerType == "yardmaster" || confFile.computerType == "ticketmaster") and (confFile.junctionsURL ~= nil and confFile.settingsURL ~= nil) then 
+    if (confFile.computerType == "yardmaster" or confFile.computerType == "ticketmaster") and (confFile.junctionsURL ~= nil and confFile.settingsURL ~= nil) then 
       
         args[2] = "-f"
         
