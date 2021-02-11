@@ -298,6 +298,12 @@ function handleMessages(event)
                 replyChannel, message, senderDistance = unpack(event)
 
     if message ~= nil and message.networkID == settings.networkID then --this is a valid message for out network
+      
+      --[[UPDATE ALL]]
+      if message.directive == "update_all" then 
+        shell.run("update")
+        return
+      end
 
       --[[YARD STATUS]]
       -----------------

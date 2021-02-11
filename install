@@ -4,6 +4,7 @@ local forse = false;
 
 
 
+
 function argErr() 
   error("Usage: "..shell.getRunningProgram().." <computer type> [-f] \n Valid computer types include: yardmaster, infoboard, ticketmaster, loadingplatform \n Options: \n -f: forse.  This will overwrite any settings files or unchanging files with either the defaults or the files linked in the install.conf file")
 end -- function 
@@ -14,7 +15,17 @@ if #args == 0 then
     confFile = textutils.unserialize( installConf.readAll() )
     installConf.close()
     args[1] = confFile.computerType
-    args[2] = "-f"
+    -- make sure both conf files are linked (if applicable)
+    if (confFile.computerType == "yardmaster" || confFile.computerType == "ticketmaster") and (confFile.junctionsURL ~= nil and confFile.settingsURL ~= nil) then 
+      
+        args[2] = "-f"
+        
+    else
+      if confFile.junctionsURL ~= nil and confFile.settingsURL ~= nil then
+        args[2] = "-f"
+      end
+    end 
+    
     
   end 
   
@@ -83,6 +94,9 @@ function download(url, file)
 end
 
 local files = {
+  scripts={
+    updateall={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/update", name="update"},
+  },
   globals={
     queue={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/Queue.lua", name="Queue.lua"},
     common={url="https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/globals/common.lua", name="common.lua"},
@@ -134,17 +148,20 @@ local computerTypes = {
       {file=files.globals.junctions, dontUpdate=true},
       {file=files.globals.brain},
       {file=files.globals.yard},
+      {file=files.scripts.updateall},
     },
     loadingplatform={
       {file=files.loadingplatform.startup},
       {file=files.loadingplatform.settings, dontUpdate=true},
       {file=files.globals.common},
+      {file=files.scripts.updateall},
     },
     infoboard={
       {file=files.infoboard.startup},
       {file=files.infoboard.settings, dontUpdate=true},
       {file=files.globals.common},
       {file=files.globals.queue},
+      {file=files.scripts.updateall},
     },
     yardmaster={
       {file=files.yardmaster.startup},
@@ -154,6 +171,7 @@ local computerTypes = {
       {file=files.globals.junctions, dontUpdate=true},
       {file=files.globals.brain},
       {file=files.globals.yard},
+      {file=files.scripts.updateall},
     }
 }
 

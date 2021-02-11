@@ -125,6 +125,16 @@ function handleMessages(rawEvent)
     if rawEvent[1] == "modem_message" then -- only run if modem message 
         local event, modemSide, senderChannel, 
                 replyChannel, message, senderDistance = unpack(rawEvent)
+        
+        if message ~= nil and message.networkID == settings.networkID then 
+            -- message for the whole network 
+            --[[UPDATE ALL]]
+              if message.directive == "update_all" then 
+                shell.run("update")
+                return
+              end
+        end 
+        
         if message ~= nil and message.networkID == settings.networkID and message.stationID == settings.stationID then
             print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
             if message.computerType == "loading_platform" then

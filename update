@@ -1,0 +1,45 @@
+local args = {...}
+local settings = require("./settings")
+local common = require("./common")
+local updateall = false
+
+local installURL = "https://raw.githubusercontent.com/poster983/rail-manager-computercraft/master/install"
+
+--local modem = peripheral.wrap( settings.modemSide )
+--modem.open(settings.modemChannel)
+
+function argErr() 
+    error("Usage: "..shell.getRunningProgram().." [all] \n Arg 1: all.  Will tell the whole fleet to update in the network")
+end
+
+
+function download(url, file)
+    local content = http.get(url)
+    if content == nil then 
+      error(file .. " is not found at " .. url )
+    end
+    content = content.readAll()
+    if not content then
+      error("Could not connect to the internet")
+    end
+    f = fs.open(file, "w")
+    f.write(content)
+    f.close()
+end
+
+download(installURL, "install")
+  
+if #args == 1 then 
+    if args[1] == "all" then 
+       updateall = true
+    else 
+       argErr() 
+    end 
+end
+
+if updateall == true then 
+    common.sendMessage("update")
+end
+
+shell.run("install")
+os.reboot()
