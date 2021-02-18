@@ -257,17 +257,17 @@ brain.restock = function()
 	
     local trainsRequested = brain.summoned:size() + brain.jobs:size() + brain.restockCount;
     local platforms = brain.platformStatus()
-    local minTrains = settings.minTrains - platforms.filled
-    --if minTrains is bigger than the total number of trains in the station, Reduce minTrains
-    if minTrains > platforms.total then 
-    	minTrains = platforms.total
+    local trainsToRequest = settings.minTrains - platforms.filled
+    --if trainsToRequest is bigger than the total number of trains in the station, Reduce trainsToRequest
+    if trainsToRequest > platforms.total then 
+    	trainsToRequest = platforms.total
     end
     
     -- make sure there is room 
-    if platforms.filled <= minTrains and trainsRequested < minTrains then 
-      print("Trying to restock " .. tostring(minTrains-trainsRequested) .. " train(s)")
+    if platforms.filled <= trainsToRequest and trainsRequested < trainsToRequest then 
+      print("Trying to restock " .. tostring(trainsToRequest-trainsRequested) .. " train(s)")
     --Loop untill we have restocked the right amount of trains 
-    	while trainsRequested < minTrains do 
+    	while trainsRequested < trainsToRequest do 
         local honorMinTrains = true
         if settings.computerType == "ticketmaster" then 
           honorMinTrains = false
