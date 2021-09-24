@@ -48,7 +48,7 @@ local installConf = fs.open( "install.conf", "r" )
 if installConf == nil then -- create the file and ask for configs
   confFile.computerType = args[1]
 	
-	print("This install script can use your own configuration when updating.￼")
+	print("This install script can use your own configuration when updating.")
 	print("To enable this feature please provide the raw links to your config files below.  (E.X. pastebin.com/raw/qwAH5FD)")
   
 	if confFile.computerType == "yardmaster" or confFile.computerType == "ticketmaster" then  -- Only show for ticketmaster and yardmaster
