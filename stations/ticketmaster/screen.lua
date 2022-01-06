@@ -61,6 +61,17 @@ previousButton.setColor(colors.red)
 previousButton.setPos(2, 2)
 previousButton.setSize(pagenationButtonWidth, pagenationHeight-1)
 
+-- Other Buttons
+  -- Restock Button
+-- local restockButton = button.create("Restock")
+-- restockButton.onClickReturn({type="command", value="restock"})
+-- restockButton.setBlinkColor(colors.green)
+-- restockButton.setColor(colors.orange)
+-- restockButton.setPos((w/2)-pagenationButtonWidth, 1)
+-- restockButton.setSize(pagenationButtonWidth, pagenationHeight-1)
+-- local showRestockButton = false
+
+
 filledBox(1,1,w,pagenationHeight, colors.brown)
 
 
@@ -160,6 +171,9 @@ screen.buildButtons = function(page)
   --add pagenation
   buttons[#buttons+1] = nextButton;
   buttons[#buttons+1] = previousButton;
+  if showRestockButton == true then 
+    buttons[#buttons+1] = restockButton;
+  end
   return buttons;
 end --function
 
@@ -202,6 +216,7 @@ screen.printJobCount = function(count)
     filledBox((w/2)-8, 2, (w/2)+8, 2, colors.brown)
     monitor.setCursorPos((w/2)-8,2)
     monitor.setTextColor(colors.black)
+    if 
     --monitor.clearLine()
     if count == 1 then -- singular 
         monitor.write(count .. " Train incoming")

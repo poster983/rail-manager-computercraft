@@ -8,6 +8,9 @@ settings.computerType = "ticketmaster" --Do Not Change
 settings.stationID = "Base" --should match the routes on other configs
 settings.networkID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the yard network this is connected to 
 
+--Will print all the debug messages
+settings.verbose = false 
+
 settings.screenSide = "top"
 settings.modemSide = "right"
 settings.cableSide = "back" -- redstone cable
@@ -28,6 +31,7 @@ settings.routes["Castle Yard"] = {junctions.yardNorthboundUTurn, hide=true}
 settings.routes["Fisherman Village"] = {junctions.yardNorthboundUTurn}
 settings.routes["Power Plant"] = {junctions.yardNorthboundUTurn}
 settings.routes["Home"] = {junctions.yardNorthboundUTurn, junctions.houseEntrance, junctions.powerCastleWest}
+
 
 
 settings.buttonColor = colors.cyan

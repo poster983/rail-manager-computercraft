@@ -4,6 +4,10 @@ settings.computerType = "loading_platform" --Do Not Change
 settings.priority = 1 --lower numbers get higher priority. also used as an id.  Must not collide with any other platform
 
 settings.platformName = "9 3/4"
+
+--Will print all the debug messages
+settings.verbose = false 
+
 settings.printerSide = "left"
 settings.cableSide = "back" -- redstone cable
 settings.modemSide = "top"
@@ -15,6 +19,8 @@ settings.networkID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the y
 settings.autogo = false -- will not wait for 'trainReady' to pulse.  will be set to true if connected to a yardmaster
 
 settings.printDelay = 0.3 -- how much time it takes in seconds for a ticket to be transfered from the printer to the cart
+
+
 
 settings.redstone = {
     --input

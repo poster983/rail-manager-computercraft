@@ -26,6 +26,15 @@ function listenForClick()
 
       end -- if 
 
+      if event ~= nil and event.type == "options" then 
+
+        if event.value == "restock" then 
+          brain.restock()
+          
+        end -- if
+      
+      end
+
     end -- while
   end -- function 
 

@@ -8,6 +8,9 @@ settings.computerType = "yardmaster" --Do Not Change
 settings.stationID = "Main Yard" --should match the routes on other configs
 settings.networkID = "417db330-bc6f-4457-8a59-9baa61e96480" --should match the network this is connected to 
 
+--Will print all the debug messages
+settings.verbose = false 
+
 settings.modemSide = "right"
 settings.cableSide = "back" -- redstone cable
 settings.modemChannel = 1 

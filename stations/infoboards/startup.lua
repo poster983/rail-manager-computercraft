@@ -136,7 +136,7 @@ function handleMessages(rawEvent)
         end 
         
         if message ~= nil and message.networkID == settings.networkID and message.stationID == settings.stationID then
-            print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
+            common.debug("Directive: " .. message.directive .. " FROM: " .. message.computerType)
             if message.computerType == "loading_platform" then
 
                 if message.directive == "connect_infoboards" then 

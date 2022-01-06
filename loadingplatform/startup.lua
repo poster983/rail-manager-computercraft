@@ -90,7 +90,8 @@ function handleMessages(event)
     end 
 
     if message ~= nil and message.networkID == settings.networkID and message.stationID == settings.stationID then -- this is a message for us 
-      print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
+      
+      common.debug("Directive: " .. message.directive .. " FROM: " .. message.computerType)
 
       if message.computerType == "ticketmaster" or message.computerType == "yardmaster" then -- Message from ticket master!
         if message.directive == settings.priority..":connect" then 
@@ -107,6 +108,7 @@ function handleMessages(event)
           destination = message.payload.destination
           
           if printTickets(message.payload.destination) == false then 
+            print("Could not print tickets")
             common.sendMessage("error", {priority=settings.priority, message="Could not print tickets"})
           elseif settings.autogo == true or station.type == "yardmaster" then 
             --wait for the printer to finish 

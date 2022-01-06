@@ -84,5 +84,12 @@ common.tprint = function(tbl, indent)
   end
 end -- tprint
 
+
+
+common.debug = function(message)
+  if settings.verbose ~= nil or settings.verbose ~= false then 
+    print(message)
+  end
+end -- debug
   
 return common;

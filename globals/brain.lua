@@ -339,7 +339,7 @@ function handleMessages(event)
       --[[STATION PROTOCALLS]]
       ------------------------
       if message.stationID == settings.stationID then -- this is a message from inside the station
-        print("Directive: " .. message.directive .. " FROM: " .. message.computerType)
+        common.debug("Directive: " .. message.directive .. " FROM: " .. message.computerType)
 
         if message.computerType == "loading_platform" then -- Loading platform!
           if message.directive == "connect_parent" then 
