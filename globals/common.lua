@@ -87,7 +87,7 @@ end -- tprint
 
 
 common.debug = function(message)
-  if settings.verbose ~= nil or settings.verbose ~= false then 
+  if settings.verbose ~= nil and settings.verbose == true then 
     print(message)
   end
 end -- debug

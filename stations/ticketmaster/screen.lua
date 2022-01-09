@@ -216,7 +216,7 @@ screen.printJobCount = function(count)
     filledBox((w/2)-8, 2, (w/2)+8, 2, colors.brown)
     monitor.setCursorPos((w/2)-8,2)
     monitor.setTextColor(colors.black)
-    if 
+    
     --monitor.clearLine()
     if count == 1 then -- singular 
         monitor.write(count .. " Train incoming")
