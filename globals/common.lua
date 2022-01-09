@@ -1,6 +1,9 @@
 local settings = require("./settings");
 local common = {}
 
+common.version = "1.0.0"
+print("Version: " .. common.version)
+
 common.getTableKeys = function(tab)
     local keyset = {}
     for k,v in pairs(tab) do
